@@ -5,7 +5,6 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/go-redis/redis/v8"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -28,7 +27,6 @@ type userHandlersHTTP struct {
 	group  *echo.Group
 	logger logger.Logger
 	cfg    *config.Config
-	v      *validator.Validate
 	userUC user.UserUseCase
 	sessUC session.SessUseCase
 }
@@ -37,11 +35,10 @@ func NewUserHandlersHTTP(
 	group *echo.Group,
 	logger logger.Logger,
 	cfg *config.Config,
-	v *validator.Validate,
 	userUC user.UserUseCase,
 	sessUC session.SessUseCase,
 ) *userHandlersHTTP {
-	return &userHandlersHTTP{group: group, logger: logger, cfg: cfg, v: v, userUC: userUC, sessUC: sessUC}
+	return &userHandlersHTTP{group: group, logger: logger, cfg: cfg, userUC: userUC, sessUC: sessUC}
 }
 
 func (h *userHandlersHTTP) Register() echo.HandlerFunc {
