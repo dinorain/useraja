@@ -52,3 +52,11 @@ func (u *User) PrepareCreate() error {
 
 	return nil
 }
+
+// Get avatar string
+func (u *User) GetAvatar() string {
+	if u.Avatar == nil {
+		return ""
+	}
+	return *u.Avatar
+}

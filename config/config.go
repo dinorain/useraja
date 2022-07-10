@@ -12,6 +12,7 @@ type Config struct {
 	Server   ServerConfig
 	Logger   Logger
 	Postgres PostgresConfig
+	Session  Session
 }
 
 type ServerConfig struct {
@@ -49,6 +50,12 @@ type PostgresConfig struct {
 	PostgresqlDbname   string
 	PostgresqlSSLMode  bool
 	PgDriver           string
+}
+
+type Session struct {
+	Prefix string
+	Name   string
+	Expire int
 }
 
 // LoadConfig Load config file from given path
