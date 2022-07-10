@@ -10,6 +10,7 @@ import (
 
 type Config struct {
 	Server   ServerConfig
+	Logger   Logger
 	Postgres PostgresConfig
 }
 
@@ -30,6 +31,14 @@ type ServerConfig struct {
 	Timeout           time.Duration
 	MaxConnectionAge  time.Duration
 	Time              time.Duration
+}
+
+type Logger struct {
+	Development       bool
+	DisableCaller     bool
+	DisableStacktrace bool
+	Encoding          string
+	Level             string
 }
 
 type PostgresConfig struct {

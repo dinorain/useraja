@@ -16,6 +16,13 @@ server:
   MaxConnectionAge: 5
   Time: 120
 
+logger:
+  Development: true
+  DisableCaller: false
+  DisableStacktrace: false
+  Encoding: console
+  Level: info
+
 postgres:
   PostgresqlHost: postgesql
   PostgresqlPort: 5432

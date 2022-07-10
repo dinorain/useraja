@@ -12,5 +12,6 @@ require (
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/shopspring/decimal v1.3.1 // indirect
 	github.com/spf13/viper v1.12.0
+	go.uber.org/zap v1.17.0
 	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
 )
