@@ -18,7 +18,7 @@ import (
 )
 
 // Register new user
-func (u *usersService) Register(ctx context.Context, r *userService.RegisterRequest) (*userService.RegisterResponse, error) {
+func (u *usersServiceGRPC) Register(ctx context.Context, r *userService.RegisterRequest) (*userService.RegisterResponse, error) {
 	user, err := u.registerReqToUserModel(r)
 	if err != nil {
 		u.logger.Errorf("registerReqToUserModel: %v", err)
@@ -40,7 +40,7 @@ func (u *usersService) Register(ctx context.Context, r *userService.RegisterRequ
 }
 
 // Login user with email and password
-func (u *usersService) Login(ctx context.Context, r *userService.LoginRequest) (*userService.LoginResponse, error) {
+func (u *usersServiceGRPC) Login(ctx context.Context, r *userService.LoginRequest) (*userService.LoginResponse, error) {
 	email := r.GetEmail()
 	if !utils.ValidateEmail(email) {
 		u.logger.Errorf("ValidateEmail: %v", email)
@@ -65,7 +65,7 @@ func (u *usersService) Login(ctx context.Context, r *userService.LoginRequest) (
 }
 
 // FindByEmail find user by email address
-func (u *usersService) FindByEmail(ctx context.Context, r *userService.FindByEmailRequest) (*userService.FindByEmailResponse, error) {
+func (u *usersServiceGRPC) FindByEmail(ctx context.Context, r *userService.FindByEmailRequest) (*userService.FindByEmailResponse, error) {
 	email := r.GetEmail()
 	if !utils.ValidateEmail(email) {
 		u.logger.Errorf("ValidateEmail: %v", email)
@@ -82,7 +82,7 @@ func (u *usersService) FindByEmail(ctx context.Context, r *userService.FindByEma
 }
 
 // FindByID find user by uuid
-func (u *usersService) FindByID(ctx context.Context, r *userService.FindByIDRequest) (*userService.FindByIDResponse, error) {
+func (u *usersServiceGRPC) FindByID(ctx context.Context, r *userService.FindByIDRequest) (*userService.FindByIDResponse, error) {
 	userUUID, err := uuid.Parse(r.GetUuid())
 	if err != nil {
 		u.logger.Errorf("uuid.Parse: %v", err)
@@ -99,7 +99,7 @@ func (u *usersService) FindByID(ctx context.Context, r *userService.FindByIDRequ
 }
 
 // GetMe to get session id from, ctx metadata, find user by uuid and returns it
-func (u *usersService) GetMe(ctx context.Context, r *userService.GetMeRequest) (*userService.GetMeResponse, error) {
+func (u *usersServiceGRPC) GetMe(ctx context.Context, r *userService.GetMeRequest) (*userService.GetMeResponse, error) {
 	sessID, err := u.getSessionIDFromCtx(ctx)
 	if err != nil {
 		u.logger.Errorf("getSessionIDFromCtx: %v", err)
@@ -125,7 +125,7 @@ func (u *usersService) GetMe(ctx context.Context, r *userService.GetMeRequest) (
 }
 
 // Logout user, delete current session
-func (u *usersService) Logout(ctx context.Context, request *userService.LogoutRequest) (*userService.LogoutResponse, error) {
+func (u *usersServiceGRPC) Logout(ctx context.Context, request *userService.LogoutRequest) (*userService.LogoutResponse, error) {
 	sessID, err := u.getSessionIDFromCtx(ctx)
 	if err != nil {
 		u.logger.Errorf("getSessionIDFromCtx: %v", err)
@@ -140,7 +140,7 @@ func (u *usersService) Logout(ctx context.Context, request *userService.LogoutRe
 	return &userService.LogoutResponse{}, nil
 }
 
-func (u *usersService) registerReqToUserModel(r *userService.RegisterRequest) (*models.User, error) {
+func (u *usersServiceGRPC) registerReqToUserModel(r *userService.RegisterRequest) (*models.User, error) {
 	avatar := r.GetAvatar()
 	userCandidate := &models.User{
 		Email:     r.GetEmail(),
@@ -158,7 +158,7 @@ func (u *usersService) registerReqToUserModel(r *userService.RegisterRequest) (*
 	return userCandidate, nil
 }
 
-func (u *usersService) userModelToProto(user *models.User) *userService.User {
+func (u *usersServiceGRPC) userModelToProto(user *models.User) *userService.User {
 	userProto := &userService.User{
 		Uuid:      user.UserID.String(),
 		FirstName: user.FirstName,
@@ -173,7 +173,7 @@ func (u *usersService) userModelToProto(user *models.User) *userService.User {
 	return userProto
 }
 
-func (u *usersService) getSessionIDFromCtx(ctx context.Context) (string, error) {
+func (u *usersServiceGRPC) getSessionIDFromCtx(ctx context.Context) (string, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return "", status.Errorf(codes.Unauthenticated, "metadata.FromIncomingContext: %v", grpc_errors.ErrNoCtxMetaData)

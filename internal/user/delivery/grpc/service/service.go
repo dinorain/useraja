@@ -7,7 +7,7 @@ import (
 	"github.com/dinorain/useraja/pkg/logger"
 )
 
-type usersService struct {
+type usersServiceGRPC struct {
 	logger logger.Logger
 	cfg    *config.Config
 	userUC user.UserUseCase
@@ -15,6 +15,6 @@ type usersService struct {
 }
 
 // Auth service constructor
-func NewAuthServerGRPC(logger logger.Logger, cfg *config.Config, userUC user.UserUseCase, sessUC session.SessUseCase) *usersService {
-	return &usersService{logger: logger, cfg: cfg, userUC: userUC, sessUC: sessUC}
+func NewAuthServerGRPC(logger logger.Logger, cfg *config.Config, userUC user.UserUseCase, sessUC session.SessUseCase) *usersServiceGRPC {
+	return &usersServiceGRPC{logger: logger, cfg: cfg, userUC: userUC, sessUC: sessUC}
 }

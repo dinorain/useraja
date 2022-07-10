@@ -21,7 +21,7 @@ func main() {
 		log.Fatalf("Loading config: %v", err)
 	}
 
-	appLogger := logger.NewAPILogger(cfg)
+	appLogger := logger.NewAppLogger(cfg)
 	appLogger.InitLogger()
 	appLogger.Infof(
 		"AppVersion: %s, LogLevel: %s, Mode: %s, SSL: %v",

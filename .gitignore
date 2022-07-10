@@ -30,3 +30,4 @@ log/
 .vscode/
 
 pgdata
+main

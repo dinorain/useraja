@@ -16,6 +16,15 @@ server:
   MaxConnectionAge: 5
   Time: 120
 
+http:
+  Port: :5001
+  Development: true
+  BasePath: /api/v1
+  DebugHeaders: false
+  HttpClientDebug: false
+  DebugErrorsResponse: true
+  IgnoreLogUrls: []
+
 logger:
   Development: true
   DisableCaller: false

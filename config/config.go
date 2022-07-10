@@ -13,6 +13,7 @@ type Config struct {
 	Logger   Logger
 	Postgres PostgresConfig
 	Redis    RedisConfig
+	Http	 Http
 	Cookie   Cookie
 	Session  Session
 }
@@ -34,6 +35,18 @@ type ServerConfig struct {
 	Timeout           time.Duration
 	MaxConnectionAge  time.Duration
 	Time              time.Duration
+}
+
+
+type Http struct {
+	Port                string
+	Development         bool
+	BasePath            string
+	userPath        string
+	DebugHeaders        bool
+	HttpClientDebug     bool
+	DebugErrorsResponse bool
+	IgnoreLogUrls       []string
 }
 
 type Logger struct {
