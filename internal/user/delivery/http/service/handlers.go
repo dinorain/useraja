@@ -1,25 +1,21 @@
 package http
 
 import (
-	"context"
 	"errors"
+	"fmt"
 	"net/http"
 
+	"github.com/go-playground/validator"
 	"github.com/go-redis/redis/v8"
+	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/metadata"
-	"google.golang.org/grpc/status"
-
-	"github.com/go-playground/validator"
 
 	"github.com/dinorain/useraja/config"
 	"github.com/dinorain/useraja/internal/models"
 	"github.com/dinorain/useraja/internal/session"
 	"github.com/dinorain/useraja/internal/user"
 	"github.com/dinorain/useraja/internal/user/delivery/http/dto"
-	"github.com/dinorain/useraja/pkg/grpc_errors"
 	httpErrors "github.com/dinorain/useraja/pkg/http_errors"
 	"github.com/dinorain/useraja/pkg/logger"
 	"github.com/dinorain/useraja/pkg/utils"
@@ -112,7 +108,12 @@ func (h *userHandlersHTTP) Login() echo.HandlerFunc {
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
 		}
 
-		return c.JSON(http.StatusCreated, dto.LoginResponseDto{UserID: user.UserID, SessionID: session})
+		tokens, err := h.userUC.GenerateTokenPair(user, session)
+		if err != nil {
+			return err
+		}
+
+		return c.JSON(http.StatusCreated, dto.LoginResponseDto{UserID: user.UserID, Tokens: tokens})
 	}
 }
 
@@ -141,7 +142,7 @@ func (h *userHandlersHTTP) FindByID() echo.HandlerFunc {
 func (h *userHandlersHTTP) GetMe() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := c.Request().Context()
-		sessID, err := h.getSessionIDFromCtx(ctx)
+		sessID, err := h.getSessionIDFromCtx(c)
 		if err != nil {
 			h.logger.Errorf("getSessionIDFromCtx: %v", err)
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
@@ -170,7 +171,7 @@ func (h *userHandlersHTTP) GetMe() echo.HandlerFunc {
 func (h *userHandlersHTTP) Logout() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := c.Request().Context()
-		sessID, err := h.getSessionIDFromCtx(ctx)
+		sessID, err := h.getSessionIDFromCtx(c)
 		if err != nil {
 			h.logger.Errorf("getSessionIDFromCtx: %v", err)
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
@@ -185,18 +186,74 @@ func (h *userHandlersHTTP) Logout() echo.HandlerFunc {
 	}
 }
 
-func (h *userHandlersHTTP) getSessionIDFromCtx(ctx context.Context) (string, error) {
-	md, ok := metadata.FromIncomingContext(ctx)
+// RefreshToken to refresh tokens
+func (h *userHandlersHTTP) RefreshToken() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		ctx := c.Request().Context()
+
+		refreshTokenDto := &dto.RefreshTokenDto{}
+		if err := c.Bind(refreshTokenDto); err != nil {
+			h.logger.WarnMsg("bind", err)
+			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
+		}
+
+		token, err := jwt.Parse(refreshTokenDto.RefreshToken, func(token *jwt.Token) (interface{}, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				h.logger.Errorf("jwt.SigningMethodHMAC: %v", token.Header["alg"])
+				return nil, fmt.Errorf("jwt.SigningMethodHMAC: %v", token.Header["alg"])
+			}
+
+			return []byte(h.cfg.Server.JwtSecretKey), nil
+		})
+
+		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+			if sessID, ok := claims["sub"].(string); ok {
+				session, err := h.sessUC.GetSessionByID(ctx, sessID)
+				if err != nil {
+					h.logger.Errorf("sessUC.GetSessionByID: %v", err)
+					if errors.Is(err, redis.Nil) {
+						return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
+					}
+					return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
+				}
+
+				user, err := h.userUC.FindById(ctx, session.UserID)
+				if err != nil {
+					h.logger.Errorf("userUC.FindById: %v", err)
+					return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
+				}
+
+				newTokenPair, err := h.userUC.GenerateTokenPair(user, sessID)
+				if err != nil {
+					return err
+				}
+
+				return c.JSON(http.StatusOK, newTokenPair)
+
+			}
+			return echo.ErrUnauthorized
+		}
+		return err
+	}
+}
+
+func (h *userHandlersHTTP) getSessionIDFromCtx(c echo.Context) (string, error) {
+	user, ok := c.Get("user").(*jwt.Token)
 	if !ok {
-		return "", status.Errorf(codes.Unauthenticated, "metadata.FromIncomingContext: %v", grpc_errors.ErrNoCtxMetaData)
+		return "", fmt.Errorf("jwt.Token")
 	}
 
-	sessionID := md.Get("session_id")
-	if sessionID[0] == "" {
-		return "", status.Errorf(codes.PermissionDenied, "md.Get sessionId: %v", grpc_errors.ErrInvalidSessionId)
+	claims, ok := user.Claims.(jwt.MapClaims)
+	if !ok {
+		return "", fmt.Errorf("jwt.MapClaims: %+v", user)
 	}
 
-	return sessionID[0], nil
+	sessionID, ok := claims["session_id"].(string)
+	if !ok {
+		return "", fmt.Errorf("invalid session id: %+v", user)
+	}
+
+	return sessionID, nil
 }
 
 func (h *userHandlersHTTP) registerReqToUserModel(r *dto.RegisterRequestDto) (*models.User, error) {

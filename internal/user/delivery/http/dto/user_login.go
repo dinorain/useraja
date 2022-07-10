@@ -10,6 +10,6 @@ type LoginRequestDto struct {
 }
 
 type LoginResponseDto struct {
-	UserID    uuid.UUID `json:"user_id" validate:"required"`
-	SessionID string    `json:"session_id" validate:"required"`
+	UserID uuid.UUID                `json:"user_id" validate:"required"`
+	Tokens *RefreshTokenResponseDto `json:"tokens" validate:"required"`
 }

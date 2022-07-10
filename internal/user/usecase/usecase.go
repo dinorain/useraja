@@ -2,13 +2,17 @@ package usecase
 
 import (
 	"context"
+	"time"
 
 	"github.com/go-redis/redis/v8"
+	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 
+	"github.com/dinorain/useraja/config"
 	"github.com/dinorain/useraja/internal/models"
 	"github.com/dinorain/useraja/internal/user"
+	"github.com/dinorain/useraja/internal/user/delivery/http/dto"
 	"github.com/dinorain/useraja/pkg/grpc_errors"
 	"github.com/dinorain/useraja/pkg/logger"
 )
@@ -19,6 +23,7 @@ const (
 
 // User UseCase
 type userUseCase struct {
+	cfg        *config.Config
 	logger     logger.Logger
 	userPgRepo user.UserPGRepository
 	redisRepo  user.UserRedisRepository
@@ -27,8 +32,8 @@ type userUseCase struct {
 var _ user.UserUseCase = (*userUseCase)(nil)
 
 // New User UseCase
-func NewUserUseCase(logger logger.Logger, userRepo user.UserPGRepository, redisRepo user.UserRedisRepository) *userUseCase {
-	return &userUseCase{logger: logger, userPgRepo: userRepo, redisRepo: redisRepo}
+func NewUserUseCase(cfg *config.Config, logger logger.Logger, userRepo user.UserPGRepository, redisRepo user.UserRedisRepository) *userUseCase {
+	return &userUseCase{cfg: cfg, logger: logger, userPgRepo: userRepo, redisRepo: redisRepo}
 }
 
 // Register new user
@@ -89,3 +94,32 @@ func (u *userUseCase) Login(ctx context.Context, email string, password string) 
 	return foundUser, err
 }
 
+func (u *userUseCase) GenerateTokenPair(user *models.User, sessionID string) (*dto.RefreshTokenResponseDto, error) {
+	token := jwt.New(jwt.SigningMethodHS256)
+
+	claims := token.Claims.(jwt.MapClaims)
+	claims["session_id"] = sessionID
+	claims["user_id"] = user.UserID
+	claims["email"] = user.Email
+	claims["role"] = user.Role
+	claims["exp"] = time.Now().Add(time.Minute * 15).Unix()
+
+	t, err := token.SignedString([]byte(u.cfg.Server.JwtSecretKey))
+	if err != nil {
+		return nil, err
+	}
+
+	refreshToken := jwt.New(jwt.SigningMethodHS256)
+	rtClaims := refreshToken.Claims.(jwt.MapClaims)
+	rtClaims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+
+	rt, err := refreshToken.SignedString([]byte(u.cfg.Server.JwtSecretKey))
+	if err != nil {
+		return nil, err
+	}
+
+	return &dto.RefreshTokenResponseDto{
+		AccessToken:  t,
+		RefreshToken: rt,
+	}, nil
+}

@@ -54,7 +54,7 @@ func (s *Server) Run() error {
 	userRepo := userRepository.NewUserPGRepository(s.db)
 	sessRepo := sessRepository.NewSessionRepository(s.redisClient, s.cfg)
 	userRedisRepo := userRepository.NewUserRedisRepo(s.redisClient, s.logger)
-	userUC := userUseCase.NewUserUseCase(s.logger, userRepo, userRedisRepo)
+	userUC := userUseCase.NewUserUseCase(s.cfg, s.logger, userRepo, userRedisRepo)
 	sessUC := sessUseCase.NewSessionUseCase(sessRepo, s.cfg)
 
 	l, err := net.Listen("tcp", s.cfg.Server.Port)
