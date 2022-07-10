@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  redis:
+    image: redis:6.0.9-alpine
+    container_name: auth_redis
+    ports:
+      - "6379:6379"
+    restart: always
+    networks:
+      - auth_network
+
+  postgesql:
+    image: postgres:13-alpine
+    container_name: auth_postgesql
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=auth_db
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    networks:
+      - auth_network
+
+  node_exporter:
+    container_name: node_exporter_container
+    image: prom/node-exporter
+    ports:
+      - '9101:9100'
+    networks:
+      - auth_network
+
+networks:
+  auth_network:
+    driver: bridge

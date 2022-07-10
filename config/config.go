@@ -12,6 +12,8 @@ type Config struct {
 	Server   ServerConfig
 	Logger   Logger
 	Postgres PostgresConfig
+	Redis    RedisConfig
+	Cookie   Cookie
 	Session  Session
 }
 
@@ -50,6 +52,25 @@ type PostgresConfig struct {
 	PostgresqlDbname   string
 	PostgresqlSSLMode  bool
 	PgDriver           string
+}
+
+type RedisConfig struct {
+	RedisAddr      string
+	RedisPassword  string
+	RedisDB        string
+	RedisDefaultdb string
+	MinIdleConns   int
+	PoolSize       int
+	PoolTimeout    int
+	Password       string
+	DB             int
+}
+
+type Cookie struct {
+	Name     string
+	MaxAge   int
+	Secure   bool
+	HTTPOnly bool
 }
 
 type Session struct {

@@ -17,7 +17,7 @@ type sessionUC struct {
 var _ session.SessUseCase = (*sessionUC)(nil)
 
 // New session use case constructor
-func NewSessUseCase(sessionRepo session.SessRepository, cfg *config.Config) session.SessUseCase {
+func NewSessionUseCase(sessionRepo session.SessRepository, cfg *config.Config) session.SessUseCase {
 	return &sessionUC{sessionRepo: sessionRepo, cfg: cfg}
 }
 
