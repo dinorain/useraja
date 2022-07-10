@@ -10,7 +10,7 @@ type RegisterRequestDto struct {
 	LastName  string `json:"last_name" validate:"required,lte=30"`
 	Password  string `json:"password" validate:"required"`
 	Role      string `json:"role" validate:"required"`
-	Avatar    string `json:"avatar" validate:"required"`
+	Avatar    string `json:"avatar"`
 }
 
 type RegisterResponseDto struct {

@@ -1,8 +1,8 @@
 package server
 
 import (
-	"net"
 	"context"
+	"net"
 	"os"
 	"os/signal"
 	"syscall"
@@ -11,12 +11,14 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
 
+	"github.com/go-playground/validator"
+
 	"github.com/dinorain/useraja/config"
 	"github.com/dinorain/useraja/internal/middlewares"
 	sessRepository "github.com/dinorain/useraja/internal/session/repository"
 	sessUseCase "github.com/dinorain/useraja/internal/session/usecase"
-	userRepository "github.com/dinorain/useraja/internal/user/repository"
 	userDeliveryHTTP "github.com/dinorain/useraja/internal/user/delivery/http/service"
+	userRepository "github.com/dinorain/useraja/internal/user/repository"
 	userUseCase "github.com/dinorain/useraja/internal/user/usecase"
 	"github.com/dinorain/useraja/pkg/logger"
 )
@@ -24,6 +26,7 @@ import (
 type Server struct {
 	logger      logger.Logger
 	cfg         *config.Config
+	v           *validator.Validate
 	echo        *echo.Echo
 	mw          middlewares.MiddlewareManager
 	db          *sqlx.DB
@@ -33,10 +36,11 @@ type Server struct {
 // Server constructor
 func NewAuthServer(logger logger.Logger, cfg *config.Config, db *sqlx.DB, redisClient *redis.Client) *Server {
 	return &Server{
-		logger: logger,
-		cfg: cfg,
-		echo: echo.New(),
-		db: db,
+		logger:      logger,
+		cfg:         cfg,
+		v:           validator.New(),
+		echo:        echo.New(),
+		db:          db,
 		redisClient: redisClient,
 	}
 }
@@ -59,7 +63,7 @@ func (s *Server) Run() error {
 	}
 	defer l.Close()
 
-	userHandlers := userDeliveryHTTP.NewUserHandlersHTTP(s.echo.Group("user"), s.logger, s.cfg, userUC, sessUC)
+	userHandlers := userDeliveryHTTP.NewUserHandlersHTTP(s.echo.Group("user"), s.logger, s.cfg, s.v, userUC, sessUC)
 	userHandlers.MapRoutes()
 
 	go func() {

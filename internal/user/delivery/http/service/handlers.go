@@ -12,6 +12,8 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
+	"github.com/go-playground/validator"
+
 	"github.com/dinorain/useraja/config"
 	"github.com/dinorain/useraja/internal/models"
 	"github.com/dinorain/useraja/internal/session"
@@ -27,6 +29,7 @@ type userHandlersHTTP struct {
 	group  *echo.Group
 	logger logger.Logger
 	cfg    *config.Config
+	v      *validator.Validate
 	userUC user.UserUseCase
 	sessUC session.SessUseCase
 }
@@ -35,10 +38,11 @@ func NewUserHandlersHTTP(
 	group *echo.Group,
 	logger logger.Logger,
 	cfg *config.Config,
+	v *validator.Validate,
 	userUC user.UserUseCase,
 	sessUC session.SessUseCase,
 ) *userHandlersHTTP {
-	return &userHandlersHTTP{group: group, logger: logger, cfg: cfg, userUC: userUC, sessUC: sessUC}
+	return &userHandlersHTTP{group: group, logger: logger, cfg: cfg, v: v, userUC: userUC, sessUC: sessUC}
 }
 
 func (h *userHandlersHTTP) Register() echo.HandlerFunc {
@@ -47,7 +51,12 @@ func (h *userHandlersHTTP) Register() echo.HandlerFunc {
 
 		createDto := &dto.RegisterRequestDto{}
 		if err := c.Bind(createDto); err != nil {
-			h.logger.WarnMsg("Bind", err)
+			h.logger.WarnMsg("bind", err)
+			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
+		}
+
+		if err := h.v.StructCtx(ctx, createDto); err != nil {
+			h.logger.WarnMsg("validate", err)
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
 		}
 
@@ -74,7 +83,12 @@ func (h *userHandlersHTTP) Login() echo.HandlerFunc {
 
 		loginDto := &dto.LoginRequestDto{}
 		if err := c.Bind(loginDto); err != nil {
-			h.logger.WarnMsg("Bind", err)
+			h.logger.WarnMsg("bind", err)
+			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
+		}
+
+		if err := h.v.StructCtx(ctx, loginDto); err != nil {
+			h.logger.WarnMsg("validate", err)
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
 		}
 

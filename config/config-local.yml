@@ -33,7 +33,7 @@ logger:
   Level: info
 
 postgres:
-  PostgresqlHost: postgesql
+  PostgresqlHost: localhost
   PostgresqlPort: 5432
   PostgresqlUser: postgres
   PostgresqlPassword: postgres

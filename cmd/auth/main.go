@@ -15,7 +15,7 @@ import (
 func main() {
 	log.Println("Starting auth microservice")
 
-	configPath := utils.GetConfigPath(os.Getenv("config"))
+	configPath := utils.GetConfigPath(os.Getenv("CONFIG"))
 	cfg, err := config.GetConfig(configPath)
 	if err != nil {
 		log.Fatalf("Loading config: %v", err)
