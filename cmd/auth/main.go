@@ -32,15 +32,15 @@ func main() {
 	)
 	appLogger.Infof("Success parsed config: %#v", cfg.Server.AppVersion)
 
+	redisClient := redis.NewRedisClient(cfg)
+	defer redisClient.Close()
+	appLogger.Info("Redis connected")
+
 	psqlDB, err := postgres.NewPsqlDB(cfg)
 	if err != nil {
 		appLogger.Fatalf("Postgresql init: %s", err)
 	}
 	defer psqlDB.Close()
-
-	redisClient := redis.NewRedisClient(cfg)
-	defer redisClient.Close()
-	appLogger.Info("Redis connected")
 
 	authServer := server.NewAuthServer(appLogger, cfg, psqlDB, redisClient)
 	appLogger.Fatal(authServer.Run())
