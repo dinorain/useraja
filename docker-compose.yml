@@ -47,7 +47,7 @@ services:
       - auth_network
 
   node_exporter:
-    container_name: node_exporter_container
+    container_name: node_exporter_con
     image: prom/node-exporter
     ports:
       - '9101:9100'
