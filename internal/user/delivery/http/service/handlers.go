@@ -12,6 +12,7 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"github.com/dinorain/useraja/config"
+	"github.com/dinorain/useraja/internal/middlewares"
 	"github.com/dinorain/useraja/internal/models"
 	"github.com/dinorain/useraja/internal/session"
 	"github.com/dinorain/useraja/internal/user"
@@ -25,6 +26,7 @@ type userHandlersHTTP struct {
 	group  *echo.Group
 	logger logger.Logger
 	cfg    *config.Config
+	mw     middlewares.MiddlewareManager
 	v      *validator.Validate
 	userUC user.UserUseCase
 	sessUC session.SessUseCase
@@ -34,11 +36,12 @@ func NewUserHandlersHTTP(
 	group *echo.Group,
 	logger logger.Logger,
 	cfg *config.Config,
+	mw middlewares.MiddlewareManager,
 	v *validator.Validate,
 	userUC user.UserUseCase,
 	sessUC session.SessUseCase,
 ) *userHandlersHTTP {
-	return &userHandlersHTTP{group: group, logger: logger, cfg: cfg, v: v, userUC: userUC, sessUC: sessUC}
+	return &userHandlersHTTP{group: group, logger: logger, cfg: cfg, mw: mw, v: v, userUC: userUC, sessUC: sessUC}
 }
 
 func (h *userHandlersHTTP) Register() echo.HandlerFunc {
@@ -152,7 +155,7 @@ func (h *userHandlersHTTP) GetMe() echo.HandlerFunc {
 		if err != nil {
 			h.logger.Errorf("sessUC.GetSessionByID: %v", err)
 			if errors.Is(err, redis.Nil) {
-				return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
+				return echo.ErrUnauthorized
 			}
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
 		}
@@ -240,17 +243,19 @@ func (h *userHandlersHTTP) RefreshToken() echo.HandlerFunc {
 func (h *userHandlersHTTP) getSessionIDFromCtx(c echo.Context) (string, error) {
 	user, ok := c.Get("user").(*jwt.Token)
 	if !ok {
-		return "", fmt.Errorf("jwt.Token")
+		h.logger.Warnf("jwt.Token: %+v", c.Get("user"))
+		return "", fmt.Errorf("invalid token header")
 	}
 
 	claims, ok := user.Claims.(jwt.MapClaims)
 	if !ok {
-		return "", fmt.Errorf("jwt.MapClaims: %+v", user)
+		h.logger.Warnf("jwt.MapClaims: %+v", c.Get("user"))
+		return "", fmt.Errorf("invalid token header")
 	}
 
 	sessionID, ok := claims["session_id"].(string)
 	if !ok {
-		return "", fmt.Errorf("invalid session id: %+v", user)
+		return "", fmt.Errorf("invalid session id")
 	}
 
 	return sessionID, nil

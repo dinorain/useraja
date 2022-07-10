@@ -63,7 +63,7 @@ func (s *Server) Run() error {
 	}
 	defer l.Close()
 
-	userHandlers := userDeliveryHTTP.NewUserHandlersHTTP(s.echo.Group("user"), s.logger, s.cfg, s.v, userUC, sessUC)
+	userHandlers := userDeliveryHTTP.NewUserHandlersHTTP(s.echo.Group("user"), s.logger, s.cfg, s.mw, s.v, userUC, sessUC)
 	userHandlers.MapRoutes()
 
 	go func() {
