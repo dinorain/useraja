@@ -8,12 +8,15 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/dinorain/useraja/internal/models"
+	"github.com/dinorain/useraja/internal/user"
 )
 
 // User repository
 type UserRepository struct {
 	db *sqlx.DB
 }
+
+var _ user.UserPGRepository = (*UserRepository)(nil)
 
 // User repository constructor
 func NewUserPGRepository(db *sqlx.DB) *UserRepository {
