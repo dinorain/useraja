@@ -6,7 +6,7 @@ import (
 
 	"github.com/dinorain/useraja/config"
 
-	_ "github.com/jackc/pgx/stdlib"
+	_ "github.com/lib/pq"
 	"github.com/jmoiron/sqlx"
 )
 

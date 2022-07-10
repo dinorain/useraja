@@ -2,34 +2,30 @@ package server
 
 import (
 	"net"
+	"context"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/go-redis/redis/v8"
-	grpcrecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
-	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	"github.com/jmoiron/sqlx"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/keepalive"
-	"google.golang.org/grpc/reflection"
+	"github.com/labstack/echo/v4"
 
 	"github.com/dinorain/useraja/config"
-	"github.com/dinorain/useraja/internal/interceptors"
+	"github.com/dinorain/useraja/internal/middlewares"
 	sessRepository "github.com/dinorain/useraja/internal/session/repository"
 	sessUseCase "github.com/dinorain/useraja/internal/session/usecase"
-	authServerGRPC "github.com/dinorain/useraja/internal/user/delivery/grpc/service"
 	userRepository "github.com/dinorain/useraja/internal/user/repository"
+	userDeliveryHTTP "github.com/dinorain/useraja/internal/user/delivery/http/service"
 	userUseCase "github.com/dinorain/useraja/internal/user/usecase"
 	"github.com/dinorain/useraja/pkg/logger"
-	userService "github.com/dinorain/useraja/proto"
 )
 
-// GRPC Auth Server
 type Server struct {
 	logger      logger.Logger
 	cfg         *config.Config
+	echo        *echo.Echo
+	mw          middlewares.MiddlewareManager
 	db          *sqlx.DB
 	redisClient *redis.Client
 }
@@ -39,6 +35,7 @@ func NewAuthServer(logger logger.Logger, cfg *config.Config, db *sqlx.DB, redisC
 	return &Server{
 		logger: logger,
 		cfg: cfg,
+		echo: echo.New(),
 		db: db,
 		redisClient: redisClient,
 	}
@@ -46,7 +43,10 @@ func NewAuthServer(logger logger.Logger, cfg *config.Config, db *sqlx.DB, redisC
 
 // Run service
 func (s *Server) Run() error {
-	im := interceptors.NewInterceptorManager(s.logger, s.cfg)
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
+	defer cancel()
+
+	s.mw = middlewares.NewMiddlewareManager(s.logger, s.cfg)
 	userRepo := userRepository.NewUserPGRepository(s.db)
 	sessRepo := sessRepository.NewSessionRepository(s.redisClient, s.cfg)
 	userRedisRepo := userRepository.NewUserRedisRepo(s.redisClient, s.logger)
@@ -59,39 +59,21 @@ func (s *Server) Run() error {
 	}
 	defer l.Close()
 
-	server := grpc.NewServer(grpc.KeepaliveParams(keepalive.ServerParameters{
-		MaxConnectionIdle: s.cfg.Server.MaxConnectionIdle * time.Minute,
-		Timeout:           s.cfg.Server.Timeout * time.Second,
-		MaxConnectionAge:  s.cfg.Server.MaxConnectionAge * time.Minute,
-		Time:              s.cfg.Server.Timeout * time.Minute,
-	}),
-		grpc.UnaryInterceptor(im.Logger),
-		grpc.ChainUnaryInterceptor(
-			grpc_ctxtags.UnaryServerInterceptor(),
-			grpcrecovery.UnaryServerInterceptor(),
-		),
-	)
-
-	if s.cfg.Server.Mode != "Production" {
-		reflection.Register(server)
-	}
-
-	authGRPCServer := authServerGRPC.NewAuthServerGRPC(s.logger, s.cfg, userUC, sessUC)
-	userService.RegisterUserServiceServer(server, authGRPCServer)
+	userHandlers := userDeliveryHTTP.NewUserHandlersHTTP(s.echo.Group("user"), s.logger, s.cfg, userUC, sessUC)
+	userHandlers.MapRoutes()
 
 	go func() {
-		s.logger.Infof("Server is listening on port: %v", s.cfg.Server.Port)
-		if err := server.Serve(l); err != nil {
-			s.logger.Fatal(err)
+		if err := s.runHttpServer(); err != nil {
+			s.logger.Errorf(" s.runHttpServer: %v", err)
+			cancel()
 		}
 	}()
+	s.logger.Infof("API Gateway is listening on PORT: %s", s.cfg.Http.Port)
 
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
-
-	<-quit
-	server.GracefulStop()
-	s.logger.Info("Server Exited Properly")
+	<-ctx.Done()
+	if err := s.echo.Server.Shutdown(ctx); err != nil {
+		s.logger.WarnMsg("echo.Server.Shutdown", err)
+	}
 
 	return nil
 }

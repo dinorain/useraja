@@ -19,7 +19,7 @@ const (
 	gzipLevel      = 5
 )
 
-func (s *server) runHttpServer() error {
+func (s *Server) runHttpServer() error {
 	s.mapRoutes()
 
 	s.echo.Server.ReadTimeout = readTimeout
@@ -29,7 +29,7 @@ func (s *server) runHttpServer() error {
 	return s.echo.Start(s.cfg.Http.Port)
 }
 
-func (s *server) mapRoutes() {
+func (s *Server) mapRoutes() {
 	s.echo.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	s.echo.Use(s.mw.RequestLoggerMiddleware)

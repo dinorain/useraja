@@ -137,7 +137,6 @@ func (l *appLogger) WarnMsg(msg string, err error) {
 	l.sugarLogger.Warn(msg, zap.String("error", err.Error()))
 }
 
-
 func (l *appLogger) Error(args ...interface{}) {
 	l.sugarLogger.Error(args...)
 }

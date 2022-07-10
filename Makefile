@@ -61,11 +61,11 @@ migrate_down:
 
 develop:
 	echo "Starting docker environment"
-	docker-compose -f docker-compose.yml up --build
+	docker compose -f docker-compose.yml up --build
 
 local:
 	echo "Starting local environment"
-	docker-compose -f docker-compose.local.yml up --build
+	docker compose -f docker-compose.local.yml up --build
 
 
 # ==============================================================================
