@@ -10,6 +10,7 @@ import (
 
 	"github.com/dinorain/useraja/internal/models"
 	"github.com/dinorain/useraja/internal/user"
+	"github.com/dinorain/useraja/pkg/utils"
 )
 
 // User repository
@@ -65,6 +66,16 @@ func (r *UserRepository) UpdateById(ctx context.Context, user *models.User) (*mo
 	}
 
 	return user, nil
+}
+
+// FindAll Find users
+func (r *UserRepository) FindAll(ctx context.Context, pagination *utils.Pagination) ([]models.User, error) {
+	var users []models.User
+	if err := r.db.GetContext(ctx, users, findAllQuery, pagination.Size, pagination.Page); err != nil {
+		return nil, errors.Wrap(err, "FindById.GetContext")
+	}
+
+	return users, nil
 }
 
 // FindByEmail Find by user email address

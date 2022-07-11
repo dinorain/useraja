@@ -18,6 +18,7 @@ import (
 	"github.com/dinorain/useraja/internal/session"
 	"github.com/dinorain/useraja/internal/user"
 	"github.com/dinorain/useraja/internal/user/delivery/http/dto"
+	"github.com/dinorain/useraja/pkg/constants"
 	httpErrors "github.com/dinorain/useraja/pkg/http_errors"
 	"github.com/dinorain/useraja/pkg/logger"
 	"github.com/dinorain/useraja/pkg/utils"
@@ -118,6 +119,21 @@ func (h *userHandlersHTTP) Login() echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusCreated, dto.LoginResponseDto{UserID: user.UserID, Tokens: tokens})
+	}
+}
+
+// FindAll find users
+func (h *userHandlersHTTP) FindAll() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		ctx := c.Request().Context()
+		pq := utils.NewPaginationFromQueryParams(c.QueryParam(constants.Size), c.QueryParam(constants.Page))
+		users, err := h.userUC.FindAll(ctx, pq)
+		if err != nil {
+			h.logger.Errorf("userUC.FindAll: %v", err)
+			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
+		}
+
+		return c.JSON(http.StatusOK, users)
 	}
 }
 
@@ -273,7 +289,7 @@ func (h *userHandlersHTTP) RefreshToken() echo.HandlerFunc {
 
 			return []byte(h.cfg.Server.JwtSecretKey), nil
 		})
-		
+
 		if err != nil {
 			h.logger.Warnf("jwt.Parse")
 			return httpErrors.ErrorCtxResponse(c, errors.New("invalid refresh token"), h.cfg.Http.DebugErrorsResponse)

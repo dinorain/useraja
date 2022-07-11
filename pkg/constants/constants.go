@@ -1,8 +1,8 @@
 package constants
 
 const (
-	GrpcPort       = "GRPC_PORT"
-	HttpPort       = "HTTP_PORT"
+	GrpcPort = "GRPC_PORT"
+	HttpPort = "HTTP_PORT"
 
 	Yaml     = "yaml"
 	Redis    = "redis"
@@ -19,4 +19,9 @@ const (
 	REQUEST  = "REQUEST"
 	REPLY    = "REPLY"
 	TIME     = "TIME"
+
+	Page   = "page"
+	Size   = "size"
+	Search = "search"
+	ID     = "id"
 )

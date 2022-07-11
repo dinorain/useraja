@@ -15,6 +15,7 @@ import (
 	"github.com/dinorain/useraja/internal/user/delivery/http/dto"
 	"github.com/dinorain/useraja/pkg/grpc_errors"
 	"github.com/dinorain/useraja/pkg/logger"
+	"github.com/dinorain/useraja/pkg/utils"
 )
 
 const (
@@ -46,7 +47,17 @@ func (u *userUseCase) Register(ctx context.Context, user *models.User) (*models.
 	return u.userPgRepo.Create(ctx, user)
 }
 
-// Find user by email address
+// FindAll find users
+func (u *userUseCase) FindAll(ctx context.Context, pagination *utils.Pagination) ([]models.User, error) {
+	users, err := u.userPgRepo.FindAll(ctx, pagination)
+	if err != nil {
+		return nil, errors.Wrap(err, "userPgRepo.FindAll")
+	}
+
+	return users, nil
+}
+
+// FindByEmail find user by email address
 func (u *userUseCase) FindByEmail(ctx context.Context, email string) (*models.User, error) {
 	findByEmail, err := u.userPgRepo.FindByEmail(ctx, email)
 	if err != nil {

@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -53,6 +54,9 @@ func (u *User) PrepareCreate() error {
 
 	if u.Role != "" {
 		u.Role = strings.ToLower(strings.TrimSpace(u.Role))
+		if u.Role != UserRoleAdmin && u.Role != UserRoleUser {
+			return fmt.Errorf("role invalid: %v", u.Role)
+		}
 	}
 
 	return nil
