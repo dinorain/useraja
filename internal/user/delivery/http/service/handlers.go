@@ -20,6 +20,7 @@ import (
 	"github.com/dinorain/useraja/internal/user/delivery/http/dto"
 	"github.com/dinorain/useraja/pkg/constants"
 	httpErrors "github.com/dinorain/useraja/pkg/http_errors"
+	httpUtils "github.com/dinorain/useraja/pkg/http_utils"
 	"github.com/dinorain/useraja/pkg/logger"
 	"github.com/dinorain/useraja/pkg/utils"
 )
@@ -133,7 +134,14 @@ func (h *userHandlersHTTP) FindAll() echo.HandlerFunc {
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
 		}
 
-		return c.JSON(http.StatusOK, users)
+		return c.JSON(http.StatusOK, httpUtils.IndexResponse{
+			Data: users,
+			Meta: httpUtils.PaginationMeta{
+				Limit:  pq.GetLimit(),
+				Offset: pq.GetOffset(),
+				Page:   pq.GetPage(),
+			},
+		})
 	}
 }
 
