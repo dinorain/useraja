@@ -8,7 +8,7 @@ import (
 	"github.com/dinorain/useraja/internal/models"
 )
 
-type UserResponse struct {
+type UserResponseDto struct {
 	UserID    uuid.UUID `json:"user_id"`
 	Email     string    `json:"email"`
 	FirstName string    `json:"first_name"`
@@ -19,8 +19,8 @@ type UserResponse struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-func UserResponseFromModel(user *models.User) *UserResponse {
-	return &UserResponse{
+func UserResponseFromModel(user *models.User) *UserResponseDto {
+	return &UserResponseDto{
 		UserID:    user.UserID,
 		Email:     user.Email,
 		FirstName: user.FirstName,

@@ -6,6 +6,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/swaggo/swag/example/basic/docs"
 
 	echoSwagger "github.com/swaggo/echo-swagger"
 )
@@ -30,6 +31,12 @@ func (s *Server) runHttpServer() error {
 }
 
 func (s *Server) mapRoutes() {
+	docs.SwaggerInfo.Version = "1.0"
+	docs.SwaggerInfo.Title = "API Gateway"
+	docs.SwaggerInfo.Description = "API Gateway auth microservice."
+	docs.SwaggerInfo.Version = "1.0"
+	docs.SwaggerInfo.BasePath = "/"
+
 	s.echo.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	s.echo.Use(s.mw.RequestLoggerMiddleware)

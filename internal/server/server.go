@@ -66,9 +66,6 @@ func (s *Server) Run() error {
 	userHandlers := userDeliveryHTTP.NewUserHandlersHTTP(s.echo.Group("user"), s.logger, s.cfg, s.mw, s.v, userUC, sessUC)
 	userHandlers.UserMapRoutes()
 
-	adminHandlers := userDeliveryHTTP.NewUserHandlersHTTP(s.echo.Group("admin/user"), s.logger, s.cfg, s.mw, s.v, userUC, sessUC)
-	adminHandlers.AdminMapRoutes()
-
 	go func() {
 		if err := s.runHttpServer(); err != nil {
 			s.logger.Errorf(" s.runHttpServer: %v", err)

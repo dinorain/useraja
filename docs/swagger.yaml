@@ -1,0 +1,251 @@
+definitions:
+  dto.LoginResponseDto:
+    properties:
+      tokens:
+        $ref: '#/definitions/dto.RefreshTokenResponseDto'
+      user_id:
+        type: string
+    required:
+    - tokens
+    - user_id
+    type: object
+  dto.RefreshTokenResponseDto:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+    required:
+    - access_token
+    - refresh_token
+    type: object
+  dto.RegisterResponseDto:
+    properties:
+      user_id:
+        type: string
+    required:
+    - user_id
+    type: object
+  dto.UserResponseDto:
+    properties:
+      avatar:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      role:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+info:
+  contact:
+    email: djourdan555@gmail.com
+    name: Dustin Jourdan
+    url: https://github.com/dinorain
+paths:
+  /admin/user:
+    get:
+      consumes:
+      - application/json
+      description: Find all users, admin only
+      parameters:
+      - description: pagination size
+        in: query
+        name: size
+        type: string
+      - description: pagination page
+        in: query
+        name: page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.LoginResponseDto'
+      summary: Find all users
+      tags:
+      - Users
+    post:
+      consumes:
+      - application/json
+      description: To create user, admin only
+      parameters:
+      - description: Email
+        in: path
+        name: email
+        required: true
+        type: string
+      - description: First name
+        in: path
+        name: first_name
+        required: true
+        type: string
+      - description: Last name
+        in: path
+        name: last_name
+        required: true
+        type: string
+      - description: Password
+        in: path
+        name: password
+        required: true
+        type: string
+      - description: Role (admin or user)
+        in: path
+        name: role
+        required: true
+        type: string
+      - description: Avatar
+        in: path
+        name: avatar
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.RegisterResponseDto'
+      summary: To register user
+      tags:
+      - Users
+  /user/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete existing user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Delete user
+      tags:
+      - Users
+    get:
+      consumes:
+      - application/json
+      description: Find existing user by id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserResponseDto'
+      summary: Find user
+      tags:
+      - Users
+    put:
+      consumes:
+      - application/json
+      description: Update existing user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserResponseDto'
+      summary: Update user
+      tags:
+      - Users
+  /user/login:
+    post:
+      consumes:
+      - application/json
+      description: User login with email and password
+      parameters:
+      - description: Email
+        in: path
+        name: email
+        required: true
+        type: string
+      - description: Password
+        in: path
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.LoginResponseDto'
+      summary: User login
+      tags:
+      - Users
+  /user/logout:
+    post:
+      consumes:
+      - application/json
+      description: Delete current session
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: User logout
+      tags:
+      - Users
+  /user/me:
+    get:
+      consumes:
+      - application/json
+      description: Get session id from token, find user by uuid and returns it
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserResponseDto'
+      summary: Find me
+      tags:
+      - Users
+  /user/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Refresh access token
+      parameters:
+      - description: Refresh Token
+        in: path
+        name: refresh_token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.RefreshTokenResponseDto'
+      summary: Refresh access token
+      tags:
+      - Users
+swagger: "2.0"

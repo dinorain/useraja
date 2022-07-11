@@ -17,7 +17,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/viper v1.12.0
 	github.com/swaggo/echo-swagger v1.3.3
-	github.com/swaggo/swag v1.8.3 // indirect
+	github.com/swaggo/swag v1.8.3
 	go.uber.org/zap v1.17.0
 	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
 	google.golang.org/grpc v1.46.2

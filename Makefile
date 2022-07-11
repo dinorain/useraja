@@ -82,3 +82,10 @@ clean:
 
 logs-local:
 	docker logs -f $(FILES)
+
+# ==============================================================================
+# Swagger
+
+swagger:
+	@echo Starting swagger generating
+	swag init -g **/**/*.go

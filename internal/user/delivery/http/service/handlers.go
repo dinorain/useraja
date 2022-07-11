@@ -47,6 +47,20 @@ func NewUserHandlersHTTP(
 	return &userHandlersHTTP{group: group, logger: logger, cfg: cfg, mw: mw, v: v, userUC: userUC, sessUC: sessUC}
 }
 
+// Register
+// @Tags Users
+// @Summary To register user
+// @Description To create user, admin only
+// @Accept json
+// @Produce json
+// @Param email path string true "Email"
+// @Param first_name path string true "First name"
+// @Param last_name path string true "Last name"
+// @Param password path string true "Password"
+// @Param role path string true "Role (admin or user)"
+// @Param avatar path string true "Avatar"
+// @Success 200 {object} dto.RegisterResponseDto
+// @Router /admin/user [post]
 func (h *userHandlersHTTP) Register() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := c.Request().Context()
@@ -78,7 +92,16 @@ func (h *userHandlersHTTP) Register() echo.HandlerFunc {
 	}
 }
 
-// Login user with email and password
+// Login
+// @Tags Users
+// @Summary User login
+// @Description User login with email and password
+// @Accept json
+// @Produce json
+// @Param email path string true "Email"
+// @Param password path string true "Password"
+// @Success 200 {object} dto.LoginResponseDto
+// @Router /user/login [post]
 func (h *userHandlersHTTP) Login() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := c.Request().Context()
@@ -123,7 +146,16 @@ func (h *userHandlersHTTP) Login() echo.HandlerFunc {
 	}
 }
 
-// FindAll find users
+// FindAll
+// @Tags Users
+// @Summary Find all users
+// @Description Find all users, admin only
+// @Accept json
+// @Produce json
+// @Param size query string false "pagination size"
+// @Param page query string false "pagination page"
+// @Success 200 {object} dto.LoginResponseDto
+// @Router /admin/user [get]
 func (h *userHandlersHTTP) FindAll() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := c.Request().Context()
@@ -145,7 +177,14 @@ func (h *userHandlersHTTP) FindAll() echo.HandlerFunc {
 	}
 }
 
-// FindByID find user by uuid
+// FindByID
+// @Tags Users
+// @Summary Find user
+// @Description Find existing user by id
+// @Accept json
+// @Produce json
+// @Success 200 {object} dto.UserResponseDto
+// @Router /user/{id} [get]
 func (h *userHandlersHTTP) FindByID() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := c.Request().Context()
@@ -166,7 +205,15 @@ func (h *userHandlersHTTP) FindByID() echo.HandlerFunc {
 	}
 }
 
-// UpdateByID update user by uuid
+// UpdateByID
+// @Tags Users
+// @Summary Update user
+// @Description Update existing user
+// @Accept json
+// @Produce json
+// @Param id path string true "User ID"
+// @Success 200 {object} dto.UserResponseDto
+// @Router /user/{id} [put]
 func (h *userHandlersHTTP) UpdateByID() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := c.Request().Context()
@@ -210,7 +257,15 @@ func (h *userHandlersHTTP) UpdateByID() echo.HandlerFunc {
 	}
 }
 
-// DeleteByID delete user by uuid
+// DeleteByID
+// @Tags Users
+// @Summary Delete user
+// @Description Delete existing user
+// @Accept json
+// @Produce json
+// @Success 200 {object} nil
+// @Param id path string true "User ID"
+// @Router /user/{id} [delete]
 func (h *userHandlersHTTP) DeleteByID() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := c.Request().Context()
@@ -230,7 +285,14 @@ func (h *userHandlersHTTP) DeleteByID() echo.HandlerFunc {
 	}
 }
 
-// GetMe to get session id from, ctx metadata, find user by uuid and returns it
+// GetMe
+// @Tags Users
+// @Summary Find me
+// @Description Get session id from token, find user by uuid and returns it
+// @Accept json
+// @Produce json
+// @Success 200 {object} dto.UserResponseDto
+// @Router /user/me [get]
 func (h *userHandlersHTTP) GetMe() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := c.Request().Context()
@@ -259,7 +321,14 @@ func (h *userHandlersHTTP) GetMe() echo.HandlerFunc {
 	}
 }
 
-// Logout user, delete current session
+// Logout
+// @Tags Users
+// @Summary User logout
+// @Description Delete current session
+// @Accept json
+// @Produce json
+// @Success 200 {object} nil
+// @Router /user/logout [post]
 func (h *userHandlersHTTP) Logout() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := c.Request().Context()
@@ -278,7 +347,15 @@ func (h *userHandlersHTTP) Logout() echo.HandlerFunc {
 	}
 }
 
-// RefreshToken to refresh tokens
+// RefreshToken
+// @Tags Users
+// @Summary Refresh access token
+// @Description Refresh access token
+// @Accept json
+// @Produce json
+// @Param refresh_token path string true "Refresh Token"
+// @Success 200 {object} dto.RefreshTokenResponseDto
+// @Router /user/refresh [post]
 func (h *userHandlersHTTP) RefreshToken() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := c.Request().Context()
