@@ -64,7 +64,10 @@ func (s *Server) Run() error {
 	defer l.Close()
 
 	userHandlers := userDeliveryHTTP.NewUserHandlersHTTP(s.echo.Group("user"), s.logger, s.cfg, s.mw, s.v, userUC, sessUC)
-	userHandlers.MapRoutes()
+	userHandlers.UserMapRoutes()
+
+	adminHandlers := userDeliveryHTTP.NewUserHandlersHTTP(s.echo.Group("admin"), s.logger, s.cfg, s.mw, s.v, userUC, sessUC)
+	adminHandlers.AdminMapRoutes()
 
 	go func() {
 		if err := s.runHttpServer(); err != nil {

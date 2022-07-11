@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
@@ -42,6 +43,31 @@ func (r *UserRepository) Create(ctx context.Context, user *models.User) (*models
 	return createdUser, nil
 }
 
+// UpdateById update existing user
+func (r *UserRepository) UpdateById(ctx context.Context, user *models.User) (*models.User, error) {
+	updatedUser := &models.User{}
+	if res, err := r.db.ExecContext(
+		ctx,
+		updateByIDQuery,
+		user.UserID,
+		user.FirstName,
+		user.LastName,
+		user.Email,
+		user.Password,
+		user.Role,
+		user.Avatar,
+	); err != nil {
+		return nil, errors.Wrap(err, "Update.ExecContext")
+	} else {
+		_, err := res.RowsAffected()
+		if err != nil {
+			return nil, errors.Wrap(err, "Update.RowsAffected")
+		}
+	}
+
+	return updatedUser, nil
+}
+
 // FindByEmail Find by user email address
 func (r *UserRepository) FindByEmail(ctx context.Context, email string) (*models.User, error) {
 	user := &models.User{}
@@ -60,4 +86,20 @@ func (r *UserRepository) FindById(ctx context.Context, userID uuid.UUID) (*model
 	}
 
 	return user, nil
+}
+
+// DeleteById Find user by uuid
+func (r *UserRepository) DeleteById(ctx context.Context, userID uuid.UUID) error {
+	if res, err := r.db.ExecContext(ctx, deleteByIDQuery, userID); err != nil {
+		return errors.Wrap(err, "DeleteById.ExecContext")
+	} else {
+		cnt, err := res.RowsAffected()
+		if err != nil {
+			return errors.Wrap(err, "DeleteById.RowsAffected")
+		} else if cnt == 0 {
+			return sql.ErrNoRows
+		}
+	}
+
+	return nil
 }

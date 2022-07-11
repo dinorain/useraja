@@ -46,7 +46,7 @@ func (u *userUseCase) Register(ctx context.Context, user *models.User) (*models.
 	return u.userPgRepo.Create(ctx, user)
 }
 
-// Find use by email address
+// Find user by email address
 func (u *userUseCase) FindByEmail(ctx context.Context, email string) (*models.User, error) {
 	findByEmail, err := u.userPgRepo.FindByEmail(ctx, email)
 	if err != nil {
@@ -58,7 +58,7 @@ func (u *userUseCase) FindByEmail(ctx context.Context, email string) (*models.Us
 	return findByEmail, nil
 }
 
-// Find use by uuid
+// Find user by uuid
 func (u *userUseCase) FindById(ctx context.Context, userID uuid.UUID) (*models.User, error) {
 	cachedUser, err := u.redisRepo.GetByIDCtx(ctx, userID.String())
 	if err != nil && !errors.Is(err, redis.Nil) {
@@ -73,11 +73,43 @@ func (u *userUseCase) FindById(ctx context.Context, userID uuid.UUID) (*models.U
 		return nil, errors.Wrap(err, "userPgRepo.FindById")
 	}
 
+	foundUser.SanitizePassword()
+
 	if err := u.redisRepo.SetUserCtx(ctx, foundUser.UserID.String(), userByIdCacheDuration, foundUser); err != nil {
 		u.logger.Errorf("redisRepo.SetUserCtx", err)
 	}
 
 	return foundUser, nil
+}
+
+// Update user by uuid
+func (u *userUseCase) UpdateById(ctx context.Context, user *models.User) (*models.User, error) {
+	updatedUser, err := u.userPgRepo.UpdateById(ctx, user)
+	if err != nil {
+		return nil, errors.Wrap(err, "userPgRepo.UpdateById")
+	}
+
+	if err := u.redisRepo.SetUserCtx(ctx, updatedUser.UserID.String(), userByIdCacheDuration, updatedUser); err != nil {
+		u.logger.Errorf("redisRepo.SetUserCtx", err)
+	}
+
+	updatedUser.SanitizePassword()
+
+	return updatedUser, nil
+}
+
+// Delete user by uuid
+func (u *userUseCase) DeleteById(ctx context.Context, userID uuid.UUID) error {
+	err := u.userPgRepo.DeleteById(ctx, userID)
+	if err != nil {
+		return errors.Wrap(err, "userPgRepo.DeleteById")
+	}
+
+	if err := u.redisRepo.DeleteUserCtx(ctx, userID.String()); err != nil {
+		u.logger.Errorf("redisRepo.DeleteUserCtx", err)
+	}
+
+	return nil
 }
 
 // Login user with email and password

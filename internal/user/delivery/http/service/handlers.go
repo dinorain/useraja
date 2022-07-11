@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/go-playground/validator"
 	"github.com/go-redis/redis/v8"
@@ -141,6 +142,64 @@ func (h *userHandlersHTTP) FindByID() echo.HandlerFunc {
 	}
 }
 
+// UpdateByID update user by uuid
+func (h *userHandlersHTTP) UpdateByID() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		ctx := c.Request().Context()
+
+		userUUID, err := uuid.Parse(c.Param("id"))
+		if err != nil {
+			h.logger.WarnMsg("uuid.FromString", err)
+			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
+		}
+
+		updateDto := &dto.UpdateRequestDto{}
+		if err := c.Bind(updateDto); err != nil {
+			h.logger.WarnMsg("bind", err)
+			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
+		}
+
+		if err := h.v.StructCtx(ctx, updateDto); err != nil {
+			h.logger.WarnMsg("validate", err)
+			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
+		}
+
+		user, err := h.userUC.FindById(ctx, userUUID)
+		if err != nil {
+			h.logger.Errorf("userUC.FindById: %v", err)
+			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
+		}
+
+		user, err = h.updateReqToUserModel(user, updateDto)
+		if err != nil {
+			h.logger.Errorf("updateReqToUserModel: %v", err)
+			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
+		}
+
+		return c.JSON(http.StatusOK, dto.UserResponseFromModel(user))
+	}
+}
+
+// DeleteByID delete user by uuid
+func (h *userHandlersHTTP) DeleteByID() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		ctx := c.Request().Context()
+
+		userUUID, err := uuid.Parse(c.Param("id"))
+		if err != nil {
+			h.logger.WarnMsg("uuid.FromString", err)
+			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
+		}
+
+		if err := h.userUC.DeleteById(ctx, userUUID); err != nil {
+			h.logger.Errorf("userUC.DeleteById: %v", err)
+			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
+		}
+
+		return c.JSON(http.StatusOK, nil)
+	}
+}
+
 // GetMe to get session id from, ctx metadata, find user by uuid and returns it
 func (h *userHandlersHTTP) GetMe() echo.HandlerFunc {
 	return func(c echo.Context) error {
@@ -244,18 +303,19 @@ func (h *userHandlersHTTP) getSessionIDFromCtx(c echo.Context) (string, error) {
 	user, ok := c.Get("user").(*jwt.Token)
 	if !ok {
 		h.logger.Warnf("jwt.Token: %+v", c.Get("user"))
-		return "", fmt.Errorf("invalid token header")
+		return "", errors.New("invalid token header")
 	}
 
 	claims, ok := user.Claims.(jwt.MapClaims)
 	if !ok {
 		h.logger.Warnf("jwt.MapClaims: %+v", c.Get("user"))
-		return "", fmt.Errorf("invalid token header")
+		return "", errors.New("invalid token header")
 	}
 
 	sessionID, ok := claims["session_id"].(string)
 	if !ok {
-		return "", fmt.Errorf("invalid session id")
+		h.logger.Warnf("session_id: %+v", claims)
+		return "", errors.New("invalid token header")
 	}
 
 	return sessionID, nil
@@ -276,4 +336,22 @@ func (h *userHandlersHTTP) registerReqToUserModel(r *dto.RegisterRequestDto) (*m
 	}
 
 	return userCandidate, nil
+}
+
+func (h *userHandlersHTTP) updateReqToUserModel(updateCandidate *models.User, r *dto.UpdateRequestDto) (*models.User, error) {
+
+	if r.FirstName != nil {
+		updateCandidate.FirstName = strings.TrimSpace(*r.FirstName)
+	}
+	if r.LastName != nil {
+		updateCandidate.LastName = strings.TrimSpace(*r.LastName)
+	}
+	if r.Password != nil {
+		updateCandidate.Password = strings.TrimSpace(*r.Password)
+		if err := updateCandidate.HashPassword(); err != nil {
+			return nil, err
+		}
+	}
+
+	return updateCandidate, nil
 }

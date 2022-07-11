@@ -8,6 +8,11 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+const (
+	UserRoleAdmin = "admin"
+	UserRoleUser  = "user"
+)
+
 // User model
 type User struct {
 	UserID    uuid.UUID `json:"user_id" db:"user_id" validate:"omitempty"`

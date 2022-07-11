@@ -1,18 +1,17 @@
 package http
 
-import (
-	"net/http"
-
-	"github.com/labstack/echo/v4"
-)
-
-func (h *userHandlersHTTP) MapRoutes() {
+func (h *userHandlersHTTP) AdminMapRoutes() {
+	h.group.Group("", h.mw.IsLoggedIn(), h.mw.IsAdmin)
 	h.group.POST("", h.Register())
+	h.group.PUT("/:id", h.UpdateByID())
+}
+
+func (h *userHandlersHTTP) UserMapRoutes() {
+	h.group.PUT("/:id", h.UpdateByID(), h.mw.IsLoggedIn())
+
 	h.group.GET("/me", h.GetMe(), h.mw.IsLoggedIn())
 	h.group.GET("/:id", h.FindByID())
+
 	h.group.POST("/login", h.Login())
 	h.group.POST("/logout", h.Logout(), h.mw.IsLoggedIn())
-	h.group.Any("/health", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, "OK")
-	})
 }
