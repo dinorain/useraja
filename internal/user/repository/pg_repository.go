@@ -45,7 +45,6 @@ func (r *UserRepository) Create(ctx context.Context, user *models.User) (*models
 
 // UpdateById update existing user
 func (r *UserRepository) UpdateById(ctx context.Context, user *models.User) (*models.User, error) {
-	updatedUser := &models.User{}
 	if res, err := r.db.ExecContext(
 		ctx,
 		updateByIDQuery,
@@ -65,7 +64,7 @@ func (r *UserRepository) UpdateById(ctx context.Context, user *models.User) (*mo
 		}
 	}
 
-	return updatedUser, nil
+	return user, nil
 }
 
 // FindByEmail Find by user email address

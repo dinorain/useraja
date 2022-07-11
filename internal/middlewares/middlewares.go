@@ -49,14 +49,14 @@ func (mw *middlewareManager) IsAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 			mw.logger.Warnf("jwt.MapClaims: %+v", c.Get("user"))
 			return errors.New("invalid token header")
 		}
-		isAdmin, ok := claims["admin"].(string)
+		role, ok := claims["role"].(string)
 		if !ok {
-			mw.logger.Warnf("isAdmin: %v", claims)
+			mw.logger.Warnf("role: %v", claims)
 			return errors.New("invalid token header")
 		}
 
-		if isAdmin != models.UserRoleAdmin {
-			return echo.ErrUnauthorized
+		if role != models.UserRoleAdmin {
+			return echo.ErrForbidden
 		}
 
 		return next(c)

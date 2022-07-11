@@ -16,6 +16,7 @@ type UserUseCase interface {
 	Login(ctx context.Context, email string, password string) (*models.User, error)
 	FindByEmail(ctx context.Context, email string) (*models.User, error)
 	FindById(ctx context.Context, userID uuid.UUID) (*models.User, error)
+	CachedFindById(ctx context.Context, userID uuid.UUID) (*models.User, error)
 	UpdateById(ctx context.Context, user *models.User) (*models.User, error)
 	DeleteById(ctx context.Context, userID uuid.UUID) error
 	GenerateTokenPair(user *models.User, sessionID string) (*dto.RefreshTokenResponseDto, error)

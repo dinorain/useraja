@@ -21,7 +21,7 @@ type User struct {
 	LastName  string    `json:"last_name" db:"last_name" validate:"required,lte=30"`
 	Role      string    `json:"role" db:"role" validate:"required"`
 	Avatar    *string   `json:"avatar" db:"avatar"`
-	Password  string    `json:"password,omitempty" db:"password"`
+	Password  string    `json:"-" db:"password"`
 	CreatedAt time.Time `json:"created_at,omitempty" db:"created_at"`
 	UpdatedAt time.Time `json:"updated_at,omitempty" db:"updated_at"`
 }

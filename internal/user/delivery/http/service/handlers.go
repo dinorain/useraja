@@ -132,9 +132,9 @@ func (h *userHandlersHTTP) FindByID() echo.HandlerFunc {
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
 		}
 
-		user, err := h.userUC.FindById(ctx, userUUID)
+		user, err := h.userUC.CachedFindById(ctx, userUUID)
 		if err != nil {
-			h.logger.Errorf("userUC.FindById: %v", err)
+			h.logger.Errorf("userUC.CachedFindById: %v", err)
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
 		}
 
@@ -173,6 +173,12 @@ func (h *userHandlersHTTP) UpdateByID() echo.HandlerFunc {
 		user, err = h.updateReqToUserModel(user, updateDto)
 		if err != nil {
 			h.logger.Errorf("updateReqToUserModel: %v", err)
+			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
+		}
+
+		user, err = h.userUC.UpdateById(ctx, user)
+		if err != nil {
+			h.logger.Errorf("userUC.UpdateById: %v", err)
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
 		}
 
@@ -219,9 +225,9 @@ func (h *userHandlersHTTP) GetMe() echo.HandlerFunc {
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
 		}
 
-		user, err := h.userUC.FindById(ctx, session.UserID)
+		user, err := h.userUC.CachedFindById(ctx, session.UserID)
 		if err != nil {
-			h.logger.Errorf("userUC.FindById: %v", err)
+			h.logger.Errorf("userUC.CachedFindById: %v", err)
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
 		}
 
@@ -267,35 +273,50 @@ func (h *userHandlersHTTP) RefreshToken() echo.HandlerFunc {
 
 			return []byte(h.cfg.Server.JwtSecretKey), nil
 		})
-
-		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			if sessID, ok := claims["sub"].(string); ok {
-				session, err := h.sessUC.GetSessionByID(ctx, sessID)
-				if err != nil {
-					h.logger.Errorf("sessUC.GetSessionByID: %v", err)
-					if errors.Is(err, redis.Nil) {
-						return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
-					}
-					return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
-				}
-
-				user, err := h.userUC.FindById(ctx, session.UserID)
-				if err != nil {
-					h.logger.Errorf("userUC.FindById: %v", err)
-					return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
-				}
-
-				newTokenPair, err := h.userUC.GenerateTokenPair(user, sessID)
-				if err != nil {
-					return err
-				}
-
-				return c.JSON(http.StatusOK, newTokenPair)
-
-			}
-			return echo.ErrUnauthorized
+		
+		if err != nil {
+			h.logger.Warnf("jwt.Parse")
+			return httpErrors.ErrorCtxResponse(c, errors.New("invalid refresh token"), h.cfg.Http.DebugErrorsResponse)
 		}
-		return err
+
+		if !token.Valid {
+			h.logger.Warnf("token.Valid")
+			return httpErrors.ErrorCtxResponse(c, errors.New("invalid refresh token"), h.cfg.Http.DebugErrorsResponse)
+		}
+
+		claims, ok := token.Claims.(jwt.MapClaims)
+		if !ok {
+			h.logger.Warnf("jwt.MapClaims: %+v", token.Claims)
+			return httpErrors.ErrorCtxResponse(c, errors.New("invalid refresh token"), h.cfg.Http.DebugErrorsResponse)
+		}
+
+		sessID, ok := claims["session_id"].(string)
+		if !ok {
+			h.logger.Warnf("session_id: %+v", claims)
+			return httpErrors.ErrorCtxResponse(c, errors.New("invalid refresh token"), h.cfg.Http.DebugErrorsResponse)
+		}
+
+		session, err := h.sessUC.GetSessionByID(ctx, sessID)
+		if err != nil {
+			h.logger.Errorf("sessUC.GetSessionByID: %v", err)
+			if errors.Is(err, redis.Nil) {
+				return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
+			}
+			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
+		}
+
+		user, err := h.userUC.FindById(ctx, session.UserID)
+		if err != nil {
+			h.logger.Errorf("userUC.FindById: %v", err)
+			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
+		}
+
+		newTokenPair, err := h.userUC.GenerateTokenPair(user, sessID)
+		if err != nil {
+			return err
+		}
+
+		return c.JSON(http.StatusOK, newTokenPair)
 	}
 }
 
@@ -347,7 +368,7 @@ func (h *userHandlersHTTP) updateReqToUserModel(updateCandidate *models.User, r 
 		updateCandidate.LastName = strings.TrimSpace(*r.LastName)
 	}
 	if r.Password != nil {
-		updateCandidate.Password = strings.TrimSpace(*r.Password)
+		updateCandidate.Password = *r.Password
 		if err := updateCandidate.HashPassword(); err != nil {
 			return nil, err
 		}

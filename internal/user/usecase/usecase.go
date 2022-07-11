@@ -58,8 +58,18 @@ func (u *userUseCase) FindByEmail(ctx context.Context, email string) (*models.Us
 	return findByEmail, nil
 }
 
-// Find user by uuid
+// FindById find user by uuid
 func (u *userUseCase) FindById(ctx context.Context, userID uuid.UUID) (*models.User, error) {
+	foundUser, err := u.userPgRepo.FindById(ctx, userID)
+	if err != nil {
+		return nil, errors.Wrap(err, "userPgRepo.FindById")
+	}
+
+	return foundUser, nil
+}
+
+// CachedFindById find user by uuid from cache
+func (u *userUseCase) CachedFindById(ctx context.Context, userID uuid.UUID) (*models.User, error) {
 	cachedUser, err := u.redisRepo.GetByIDCtx(ctx, userID.String())
 	if err != nil && !errors.Is(err, redis.Nil) {
 		u.logger.Errorf("redisRepo.GetByIDCtx", err)
@@ -73,8 +83,6 @@ func (u *userUseCase) FindById(ctx context.Context, userID uuid.UUID) (*models.U
 		return nil, errors.Wrap(err, "userPgRepo.FindById")
 	}
 
-	foundUser.SanitizePassword()
-
 	if err := u.redisRepo.SetUserCtx(ctx, foundUser.UserID.String(), userByIdCacheDuration, foundUser); err != nil {
 		u.logger.Errorf("redisRepo.SetUserCtx", err)
 	}
@@ -82,7 +90,7 @@ func (u *userUseCase) FindById(ctx context.Context, userID uuid.UUID) (*models.U
 	return foundUser, nil
 }
 
-// Update user by uuid
+// UpdateById update user by uuid
 func (u *userUseCase) UpdateById(ctx context.Context, user *models.User) (*models.User, error) {
 	updatedUser, err := u.userPgRepo.UpdateById(ctx, user)
 	if err != nil {
@@ -98,7 +106,7 @@ func (u *userUseCase) UpdateById(ctx context.Context, user *models.User) (*model
 	return updatedUser, nil
 }
 
-// Delete user by uuid
+// DeleteById delete user by uuid
 func (u *userUseCase) DeleteById(ctx context.Context, userID uuid.UUID) error {
 	err := u.userPgRepo.DeleteById(ctx, userID)
 	if err != nil {
@@ -143,6 +151,7 @@ func (u *userUseCase) GenerateTokenPair(user *models.User, sessionID string) (*d
 
 	refreshToken := jwt.New(jwt.SigningMethodHS256)
 	rtClaims := refreshToken.Claims.(jwt.MapClaims)
+	rtClaims["session_id"] = sessionID
 	rtClaims["exp"] = time.Now().Add(time.Hour * 24).Unix()
 
 	rt, err := refreshToken.SignedString([]byte(u.cfg.Server.JwtSecretKey))

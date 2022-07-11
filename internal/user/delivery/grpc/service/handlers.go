@@ -89,10 +89,10 @@ func (u *usersServiceGRPC) FindByID(ctx context.Context, r *userService.FindByID
 		return nil, status.Errorf(grpc_errors.ParseGRPCErrStatusCode(err), "uuid.Parse: %v", err)
 	}
 
-	user, err := u.userUC.FindById(ctx, userUUID)
+	user, err := u.userUC.CachedFindById(ctx, userUUID)
 	if err != nil {
-		u.logger.Errorf("userUC.FindById: %v", err)
-		return nil, status.Errorf(grpc_errors.ParseGRPCErrStatusCode(err), "userUC.FindById: %v", err)
+		u.logger.Errorf("userUC.CachedFindById: %v", err)
+		return nil, status.Errorf(grpc_errors.ParseGRPCErrStatusCode(err), "userUC.CachedFindById: %v", err)
 	}
 
 	return &userService.FindByIDResponse{User: u.userModelToProto(user)}, nil
@@ -115,10 +115,10 @@ func (u *usersServiceGRPC) GetMe(ctx context.Context, r *userService.GetMeReques
 		return nil, status.Errorf(grpc_errors.ParseGRPCErrStatusCode(err), "sessUC.GetSessionByID: %v", err)
 	}
 
-	user, err := u.userUC.FindById(ctx, session.UserID)
+	user, err := u.userUC.CachedFindById(ctx, session.UserID)
 	if err != nil {
-		u.logger.Errorf("userUC.FindById: %v", err)
-		return nil, status.Errorf(grpc_errors.ParseGRPCErrStatusCode(err), "userUC.FindById: %v", err)
+		u.logger.Errorf("userUC.CachedFindById: %v", err)
+		return nil, status.Errorf(grpc_errors.ParseGRPCErrStatusCode(err), "userUC.CachedFindById: %v", err)
 	}
 
 	return &userService.GetMeResponse{User: u.userModelToProto(user)}, nil
