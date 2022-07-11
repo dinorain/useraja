@@ -17,6 +17,7 @@ require (
 	github.com/golang/protobuf v1.5.2
 	github.com/gomodule/redigo v1.8.9 // indirect
 	github.com/google/uuid v1.1.2
+	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/labstack/echo/v4 v4.7.2
 	github.com/lib/pq v1.2.0
