@@ -12,8 +12,16 @@ import (
 	"github.com/dinorain/useraja/pkg/utils"
 )
 
+// @contact.name Dustin Jourdan
+// @contact.url https://github.com/dinorain
+// @contact.email djourdan555@gmail.com
+
+// @securityDefinitions.apikey  ApiKeyAuth
+// @in                          header
+// @name                        Authorization
+
 func main() {
-	log.Println("Starting auth grpc microservice")
+	log.Println("Starting auth microservice")
 
 	configPath := utils.GetConfigPath(os.Getenv("CONFIG"))
 	cfg, err := config.GetConfig(configPath)

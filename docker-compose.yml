@@ -1,8 +1,8 @@
 version: "3.8"
 
 services:
-  auth_http_microservice:
-    container_name: auth_http_microservice
+  auth_microservice:
+    container_name: auth_microservice
     build:
       context: ./
       dockerfile: docker/api_gateway_http.Dockerfile
@@ -12,27 +12,6 @@ services:
       - "8001:8001"
     environment:
       - PORT=5001
-    depends_on:
-      - postgesql
-      - redis
-      - node_exporter
-    restart: always
-    volumes:
-      - ./:/app
-    networks:
-      - auth_network
-
-  auth_grpc_microservice:
-    container_name: auth_grpc_microservice
-    build:
-      context: ./
-      dockerfile: docker/api_gateway_grpc.Dockerfile
-    ports:
-      - "5000:5000"
-      - "5555:5555"
-      - "7070:7070"
-    environment:
-      - PORT=5000
     depends_on:
       - postgesql
       - redis

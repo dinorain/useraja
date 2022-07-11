@@ -68,7 +68,7 @@ func (s *Server) Run() error {
 
 	go func() {
 		if err := s.runHttpServer(); err != nil {
-			s.logger.Errorf(" s.runHttpServer: %v", err)
+			s.logger.Errorf("s.runHttpServer: %v", err)
 			cancel()
 		}
 	}()
