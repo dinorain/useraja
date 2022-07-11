@@ -3,6 +3,7 @@
 #### What have been used:
 * [sqlx](https://github.com/jmoiron/sqlx) - Extensions to database/sql.
 * [pgx](https://github.com/jackc/pgx) - PostgreSQL driver and toolkit for Go
+* [JWT]("https://github.com/golang-jwt/jwt") - A Go implementation of JSON Web Tokens.
 * [viper](https://github.com/spf13/viper) - Go configuration with fangs
 * [go-redis](https://github.com/go-redis/redis) - Redis client for Golang
 * [zap](https://github.com/uber-go/zap) - Logger
