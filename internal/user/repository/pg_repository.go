@@ -71,8 +71,8 @@ func (r *UserRepository) UpdateById(ctx context.Context, user *models.User) (*mo
 // FindAll Find users
 func (r *UserRepository) FindAll(ctx context.Context, pagination *utils.Pagination) ([]models.User, error) {
 	var users []models.User
-	if err := r.db.GetContext(ctx, users, findAllQuery, pagination.Size, pagination.Page); err != nil {
-		return nil, errors.Wrap(err, "FindById.GetContext")
+	if err := r.db.SelectContext(ctx, &users, findAllQuery, pagination.GetLimit(), pagination.GetOffset()); err != nil {
+		return nil, errors.Wrap(err, "FindById.SelectContext")
 	}
 
 	return users, nil
