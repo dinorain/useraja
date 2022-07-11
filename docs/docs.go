@@ -20,8 +20,13 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/admin/user": {
+        "/user": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Find all users, admin only",
                 "consumes": [
                     "application/json"
@@ -51,12 +56,17 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.LoginResponseDto"
+                            "$ref": "#/definitions/dto.FindUserResponseDto"
                         }
                     }
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "To create user, admin only",
                 "consumes": [
                     "application/json"
@@ -70,46 +80,13 @@ const docTemplate = `{
                 "summary": "To register user",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Email",
-                        "name": "email",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "First name",
-                        "name": "first_name",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Last name",
-                        "name": "last_name",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Password",
-                        "name": "password",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Role (admin or user)",
-                        "name": "role",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Avatar",
-                        "name": "avatar",
-                        "in": "path",
-                        "required": true
+                        "description": "Payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.RegisterRequestDto"
+                        }
                     }
                 ],
                 "responses": {
@@ -137,18 +114,13 @@ const docTemplate = `{
                 "summary": "User login",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Email",
-                        "name": "email",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Password",
-                        "name": "password",
-                        "in": "path",
-                        "required": true
+                        "description": "Payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.LoginRequestDto"
+                        }
                     }
                 ],
                 "responses": {
@@ -163,6 +135,11 @@ const docTemplate = `{
         },
         "/user/logout": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Delete current session",
                 "consumes": [
                     "application/json"
@@ -183,6 +160,11 @@ const docTemplate = `{
         },
         "/user/me": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Get session id from token, find user by uuid and returns it",
                 "consumes": [
                     "application/json"
@@ -219,11 +201,13 @@ const docTemplate = `{
                 "summary": "Refresh access token",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Refresh Token",
-                        "name": "refresh_token",
-                        "in": "path",
-                        "required": true
+                        "description": "Payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.RefreshTokenDto"
+                        }
                     }
                 ],
                 "responses": {
@@ -238,6 +222,11 @@ const docTemplate = `{
         },
         "/user/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Find existing user by id",
                 "consumes": [
                     "application/json"
@@ -259,6 +248,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Update existing user",
                 "consumes": [
                     "application/json"
@@ -289,6 +283,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Delete existing user",
                 "consumes": [
                     "application/json"
@@ -318,6 +317,31 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.FindUserResponseDto": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "meta": {
+                    "$ref": "#/definitions/utils.PaginationMetaDto"
+                }
+            }
+        },
+        "dto.LoginRequestDto": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "maxLength": 60
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.LoginResponseDto": {
             "type": "object",
             "required": [
@@ -333,6 +357,17 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.RefreshTokenDto": {
+            "type": "object",
+            "required": [
+                "refresh_token"
+            ],
+            "properties": {
+                "refresh_token": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.RefreshTokenResponseDto": {
             "type": "object",
             "required": [
@@ -344,6 +379,39 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "refresh_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.RegisterRequestDto": {
+            "type": "object",
+            "required": [
+                "email",
+                "first_name",
+                "last_name",
+                "password",
+                "role"
+            ],
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string",
+                    "maxLength": 60
+                },
+                "first_name": {
+                    "type": "string",
+                    "maxLength": 30
+                },
+                "last_name": {
+                    "type": "string",
+                    "maxLength": 30
+                },
+                "password": {
+                    "type": "string"
+                },
+                "role": {
                     "type": "string"
                 }
             }
@@ -387,6 +455,27 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "utils.PaginationMetaDto": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer"
+                },
+                "offset": {
+                    "type": "integer"
+                },
+                "page": {
+                    "type": "integer"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

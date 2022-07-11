@@ -20,7 +20,6 @@ import (
 	"github.com/dinorain/useraja/internal/user/delivery/http/dto"
 	"github.com/dinorain/useraja/pkg/constants"
 	httpErrors "github.com/dinorain/useraja/pkg/http_errors"
-	httpUtils "github.com/dinorain/useraja/pkg/http_utils"
 	"github.com/dinorain/useraja/pkg/logger"
 	"github.com/dinorain/useraja/pkg/utils"
 )
@@ -53,14 +52,10 @@ func NewUserHandlersHTTP(
 // @Description To create user, admin only
 // @Accept json
 // @Produce json
-// @Param email path string true "Email"
-// @Param first_name path string true "First name"
-// @Param last_name path string true "Last name"
-// @Param password path string true "Password"
-// @Param role path string true "Role (admin or user)"
-// @Param avatar path string true "Avatar"
+// @Security ApiKeyAuth
+// @Param payload body dto.RegisterRequestDto true "Payload"
 // @Success 200 {object} dto.RegisterResponseDto
-// @Router /admin/user [post]
+// @Router /user [post]
 func (h *userHandlersHTTP) Register() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := c.Request().Context()
@@ -98,8 +93,7 @@ func (h *userHandlersHTTP) Register() echo.HandlerFunc {
 // @Description User login with email and password
 // @Accept json
 // @Produce json
-// @Param email path string true "Email"
-// @Param password path string true "Password"
+// @Param payload body dto.LoginRequestDto true "Payload"
 // @Success 200 {object} dto.LoginResponseDto
 // @Router /user/login [post]
 func (h *userHandlersHTTP) Login() echo.HandlerFunc {
@@ -152,10 +146,11 @@ func (h *userHandlersHTTP) Login() echo.HandlerFunc {
 // @Description Find all users, admin only
 // @Accept json
 // @Produce json
+// @Security ApiKeyAuth
 // @Param size query string false "pagination size"
 // @Param page query string false "pagination page"
-// @Success 200 {object} dto.LoginResponseDto
-// @Router /admin/user [get]
+// @Success 200 {object} dto.FindUserResponseDto
+// @Router /user [get]
 func (h *userHandlersHTTP) FindAll() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := c.Request().Context()
@@ -166,9 +161,9 @@ func (h *userHandlersHTTP) FindAll() echo.HandlerFunc {
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
 		}
 
-		return c.JSON(http.StatusOK, httpUtils.IndexResponse{
+		return c.JSON(http.StatusOK, dto.FindUserResponseDto{
 			Data: users,
-			Meta: httpUtils.PaginationMeta{
+			Meta: utils.PaginationMetaDto{
 				Limit:  pq.GetLimit(),
 				Offset: pq.GetOffset(),
 				Page:   pq.GetPage(),
@@ -183,6 +178,7 @@ func (h *userHandlersHTTP) FindAll() echo.HandlerFunc {
 // @Description Find existing user by id
 // @Accept json
 // @Produce json
+// @Security ApiKeyAuth
 // @Success 200 {object} dto.UserResponseDto
 // @Router /user/{id} [get]
 func (h *userHandlersHTTP) FindByID() echo.HandlerFunc {
@@ -211,6 +207,7 @@ func (h *userHandlersHTTP) FindByID() echo.HandlerFunc {
 // @Description Update existing user
 // @Accept json
 // @Produce json
+// @Security ApiKeyAuth
 // @Param id path string true "User ID"
 // @Success 200 {object} dto.UserResponseDto
 // @Router /user/{id} [put]
@@ -263,6 +260,7 @@ func (h *userHandlersHTTP) UpdateByID() echo.HandlerFunc {
 // @Description Delete existing user
 // @Accept json
 // @Produce json
+// @Security ApiKeyAuth
 // @Success 200 {object} nil
 // @Param id path string true "User ID"
 // @Router /user/{id} [delete]
@@ -291,6 +289,7 @@ func (h *userHandlersHTTP) DeleteByID() echo.HandlerFunc {
 // @Description Get session id from token, find user by uuid and returns it
 // @Accept json
 // @Produce json
+// @Security ApiKeyAuth
 // @Success 200 {object} dto.UserResponseDto
 // @Router /user/me [get]
 func (h *userHandlersHTTP) GetMe() echo.HandlerFunc {
@@ -327,6 +326,7 @@ func (h *userHandlersHTTP) GetMe() echo.HandlerFunc {
 // @Description Delete current session
 // @Accept json
 // @Produce json
+// @Security ApiKeyAuth
 // @Success 200 {object} nil
 // @Router /user/logout [post]
 func (h *userHandlersHTTP) Logout() echo.HandlerFunc {
@@ -353,7 +353,7 @@ func (h *userHandlersHTTP) Logout() echo.HandlerFunc {
 // @Description Refresh access token
 // @Accept json
 // @Produce json
-// @Param refresh_token path string true "Refresh Token"
+// @Param payload body dto.RefreshTokenDto true "Payload"
 // @Success 200 {object} dto.RefreshTokenResponseDto
 // @Router /user/refresh [post]
 func (h *userHandlersHTTP) RefreshToken() echo.HandlerFunc {

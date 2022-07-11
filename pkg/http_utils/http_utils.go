@@ -8,17 +8,6 @@ type responseWriterWrapper struct {
 	wroteHeader bool
 }
 
-type PaginationMeta struct {
-	Limit  int `json:"limit"`
-	Offset int `json:"offset"`
-	Page   int `json:"page"`
-}
-
-type IndexResponse struct {
-	Meta PaginationMeta `json:"meta"`
-	Data interface{}    `json:"data"`
-}
-
 // NewWriterWrapper response writer wrapper
 func NewWriterWrapper(w http.ResponseWriter) *responseWriterWrapper {
 	return &responseWriterWrapper{ResponseWriter: w}

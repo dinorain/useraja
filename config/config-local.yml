@@ -19,7 +19,7 @@ server:
 http:
   Port: :5001
   Development: true
-  BasePath: /api/v1
+  BasePath: /
   DebugHeaders: false
   HttpClientDebug: false
   DebugErrorsResponse: true

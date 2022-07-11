@@ -15,6 +15,11 @@ import (
 // @contact.name Dustin Jourdan
 // @contact.url https://github.com/dinorain
 // @contact.email djourdan555@gmail.com
+
+// @securityDefinitions.apikey  ApiKeyAuth
+// @in                          header
+// @name                        Authorization
+
 func main() {
 	log.Println("Starting auth microservice")
 
