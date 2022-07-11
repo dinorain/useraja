@@ -1,7 +1,7 @@
 package config
 
 import (
-	"errors"
+	"fmt"
 	"log"
 	"time"
 
@@ -13,7 +13,7 @@ type Config struct {
 	Logger   Logger
 	Postgres PostgresConfig
 	Redis    RedisConfig
-	Http	 Http
+	Http     Http
 	Cookie   Cookie
 	Session  Session
 }
@@ -37,12 +37,11 @@ type ServerConfig struct {
 	Time              time.Duration
 }
 
-
 type Http struct {
 	Port                string
 	Development         bool
 	BasePath            string
-	userPath        string
+	userPath            string
 	DebugHeaders        bool
 	HttpClientDebug     bool
 	DebugErrorsResponse bool
@@ -101,7 +100,7 @@ func LoadConfig(filename string) (*viper.Viper, error) {
 	v.AutomaticEnv()
 	if err := v.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			return nil, errors.New("config file not found")
+			return nil, fmt.Errorf("config file not found: %v", filename)
 		}
 		return nil, err
 	}

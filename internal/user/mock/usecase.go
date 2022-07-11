@@ -9,6 +9,7 @@ import (
 	reflect "reflect"
 
 	models "github.com/dinorain/useraja/internal/models"
+	utils "github.com/dinorain/useraja/pkg/utils"
 	gomock "github.com/golang/mock/gomock"
 	uuid "github.com/google/uuid"
 )
@@ -34,6 +35,50 @@ func NewMockUserUseCase(ctrl *gomock.Controller) *MockUserUseCase {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockUserUseCase) EXPECT() *MockUserUseCaseMockRecorder {
 	return m.recorder
+}
+
+// CachedFindById mocks base method.
+func (m *MockUserUseCase) CachedFindById(ctx context.Context, userID uuid.UUID) (*models.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CachedFindById", ctx, userID)
+	ret0, _ := ret[0].(*models.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CachedFindById indicates an expected call of CachedFindById.
+func (mr *MockUserUseCaseMockRecorder) CachedFindById(ctx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CachedFindById", reflect.TypeOf((*MockUserUseCase)(nil).CachedFindById), ctx, userID)
+}
+
+// DeleteById mocks base method.
+func (m *MockUserUseCase) DeleteById(ctx context.Context, userID uuid.UUID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteById", ctx, userID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteById indicates an expected call of DeleteById.
+func (mr *MockUserUseCaseMockRecorder) DeleteById(ctx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteById", reflect.TypeOf((*MockUserUseCase)(nil).DeleteById), ctx, userID)
+}
+
+// FindAll mocks base method.
+func (m *MockUserUseCase) FindAll(ctx context.Context, pagination *utils.Pagination) ([]models.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindAll", ctx, pagination)
+	ret0, _ := ret[0].([]models.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindAll indicates an expected call of FindAll.
+func (mr *MockUserUseCaseMockRecorder) FindAll(ctx, pagination interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindAll", reflect.TypeOf((*MockUserUseCase)(nil).FindAll), ctx, pagination)
 }
 
 // FindByEmail mocks base method.
@@ -66,6 +111,22 @@ func (mr *MockUserUseCaseMockRecorder) FindById(ctx, userID interface{}) *gomock
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindById", reflect.TypeOf((*MockUserUseCase)(nil).FindById), ctx, userID)
 }
 
+// GenerateTokenPair mocks base method.
+func (m *MockUserUseCase) GenerateTokenPair(user *models.User, sessionID string) (string, string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GenerateTokenPair", user, sessionID)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(string)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GenerateTokenPair indicates an expected call of GenerateTokenPair.
+func (mr *MockUserUseCaseMockRecorder) GenerateTokenPair(user, sessionID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateTokenPair", reflect.TypeOf((*MockUserUseCase)(nil).GenerateTokenPair), user, sessionID)
+}
+
 // Login mocks base method.
 func (m *MockUserUseCase) Login(ctx context.Context, email, password string) (*models.User, error) {
 	m.ctrl.T.Helper()
@@ -94,4 +155,19 @@ func (m *MockUserUseCase) Register(ctx context.Context, user *models.User) (*mod
 func (mr *MockUserUseCaseMockRecorder) Register(ctx, user interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Register", reflect.TypeOf((*MockUserUseCase)(nil).Register), ctx, user)
+}
+
+// UpdateById mocks base method.
+func (m *MockUserUseCase) UpdateById(ctx context.Context, user *models.User) (*models.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateById", ctx, user)
+	ret0, _ := ret[0].(*models.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateById indicates an expected call of UpdateById.
+func (mr *MockUserUseCaseMockRecorder) UpdateById(ctx, user interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateById", reflect.TypeOf((*MockUserUseCase)(nil).UpdateById), ctx, user)
 }

@@ -12,7 +12,6 @@ import (
 	"github.com/dinorain/useraja/config"
 	"github.com/dinorain/useraja/internal/models"
 	"github.com/dinorain/useraja/internal/user"
-	"github.com/dinorain/useraja/internal/user/delivery/http/dto"
 	"github.com/dinorain/useraja/pkg/grpc_errors"
 	"github.com/dinorain/useraja/pkg/logger"
 	"github.com/dinorain/useraja/pkg/utils"
@@ -145,7 +144,7 @@ func (u *userUseCase) Login(ctx context.Context, email string, password string) 
 	return foundUser, err
 }
 
-func (u *userUseCase) GenerateTokenPair(user *models.User, sessionID string) (*dto.RefreshTokenResponseDto, error) {
+func (u *userUseCase) GenerateTokenPair(user *models.User, sessionID string) (access string, refresh string, err error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 
 	claims := token.Claims.(jwt.MapClaims)
@@ -155,9 +154,9 @@ func (u *userUseCase) GenerateTokenPair(user *models.User, sessionID string) (*d
 	claims["role"] = user.Role
 	claims["exp"] = time.Now().Add(time.Minute * 15).Unix()
 
-	t, err := token.SignedString([]byte(u.cfg.Server.JwtSecretKey))
+	access, err = token.SignedString([]byte(u.cfg.Server.JwtSecretKey))
 	if err != nil {
-		return nil, err
+		return "", "", err
 	}
 
 	refreshToken := jwt.New(jwt.SigningMethodHS256)
@@ -165,13 +164,10 @@ func (u *userUseCase) GenerateTokenPair(user *models.User, sessionID string) (*d
 	rtClaims["session_id"] = sessionID
 	rtClaims["exp"] = time.Now().Add(time.Hour * 24).Unix()
 
-	rt, err := refreshToken.SignedString([]byte(u.cfg.Server.JwtSecretKey))
+	refresh, err = refreshToken.SignedString([]byte(u.cfg.Server.JwtSecretKey))
 	if err != nil {
-		return nil, err
+		return "", "", err
 	}
 
-	return &dto.RefreshTokenResponseDto{
-		AccessToken:  t,
-		RefreshToken: rt,
-	}, nil
+	return access, refresh, nil
 }

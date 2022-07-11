@@ -7,7 +7,6 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/dinorain/useraja/internal/models"
-	"github.com/dinorain/useraja/internal/user/delivery/http/dto"
 	"github.com/dinorain/useraja/pkg/utils"
 )
 
@@ -21,5 +20,5 @@ type UserUseCase interface {
 	CachedFindById(ctx context.Context, userID uuid.UUID) (*models.User, error)
 	UpdateById(ctx context.Context, user *models.User) (*models.User, error)
 	DeleteById(ctx context.Context, userID uuid.UUID) error
-	GenerateTokenPair(user *models.User, sessionID string) (*dto.RefreshTokenResponseDto, error)
+	GenerateTokenPair(user *models.User, sessionID string) (access string, refresh string, err error)
 }

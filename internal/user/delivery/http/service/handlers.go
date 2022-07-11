@@ -131,12 +131,15 @@ func (h *userHandlersHTTP) Login() echo.HandlerFunc {
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
 		}
 
-		tokens, err := h.userUC.GenerateTokenPair(user, session)
+		accessToken, refreshToken, err := h.userUC.GenerateTokenPair(user, session)
 		if err != nil {
 			return err
 		}
 
-		return c.JSON(http.StatusCreated, dto.LoginResponseDto{UserID: user.UserID, Tokens: tokens})
+		return c.JSON(http.StatusCreated, dto.LoginResponseDto{UserID: user.UserID, Tokens: &dto.RefreshTokenResponseDto{
+			AccessToken:  accessToken,
+			RefreshToken: refreshToken,
+		}})
 	}
 }
 
@@ -412,12 +415,15 @@ func (h *userHandlersHTTP) RefreshToken() echo.HandlerFunc {
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
 		}
 
-		newTokenPair, err := h.userUC.GenerateTokenPair(user, sessID)
+		accessToken, refreshToken, err := h.userUC.GenerateTokenPair(user, sessID)
 		if err != nil {
 			return err
 		}
 
-		return c.JSON(http.StatusOK, newTokenPair)
+		return c.JSON(http.StatusOK, dto.RefreshTokenResponseDto{
+			AccessToken:  accessToken,
+			RefreshToken: refreshToken,
+		})
 	}
 }
 

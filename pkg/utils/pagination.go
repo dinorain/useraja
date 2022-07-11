@@ -30,7 +30,7 @@ func NewPaginationFromQueryParams(size string, page string) *Pagination {
 	if page != "" {
 		p.SetPage(page)
 	}
-	
+
 	return p
 }
 

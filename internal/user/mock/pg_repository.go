@@ -9,6 +9,7 @@ import (
 	reflect "reflect"
 
 	models "github.com/dinorain/useraja/internal/models"
+	utils "github.com/dinorain/useraja/pkg/utils"
 	gomock "github.com/golang/mock/gomock"
 	uuid "github.com/google/uuid"
 )
@@ -51,6 +52,35 @@ func (mr *MockUserPGRepositoryMockRecorder) Create(ctx, user interface{}) *gomoc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockUserPGRepository)(nil).Create), ctx, user)
 }
 
+// DeleteById mocks base method.
+func (m *MockUserPGRepository) DeleteById(ctx context.Context, userID uuid.UUID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteById", ctx, userID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteById indicates an expected call of DeleteById.
+func (mr *MockUserPGRepositoryMockRecorder) DeleteById(ctx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteById", reflect.TypeOf((*MockUserPGRepository)(nil).DeleteById), ctx, userID)
+}
+
+// FindAll mocks base method.
+func (m *MockUserPGRepository) FindAll(ctx context.Context, pagination *utils.Pagination) ([]models.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindAll", ctx, pagination)
+	ret0, _ := ret[0].([]models.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindAll indicates an expected call of FindAll.
+func (mr *MockUserPGRepositoryMockRecorder) FindAll(ctx, pagination interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindAll", reflect.TypeOf((*MockUserPGRepository)(nil).FindAll), ctx, pagination)
+}
+
 // FindByEmail mocks base method.
 func (m *MockUserPGRepository) FindByEmail(ctx context.Context, email string) (*models.User, error) {
 	m.ctrl.T.Helper()
@@ -79,4 +109,19 @@ func (m *MockUserPGRepository) FindById(ctx context.Context, userID uuid.UUID) (
 func (mr *MockUserPGRepositoryMockRecorder) FindById(ctx, userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindById", reflect.TypeOf((*MockUserPGRepository)(nil).FindById), ctx, userID)
+}
+
+// UpdateById mocks base method.
+func (m *MockUserPGRepository) UpdateById(ctx context.Context, user *models.User) (*models.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateById", ctx, user)
+	ret0, _ := ret[0].(*models.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateById indicates an expected call of UpdateById.
+func (mr *MockUserPGRepositoryMockRecorder) UpdateById(ctx, user interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateById", reflect.TypeOf((*MockUserPGRepository)(nil).UpdateById), ctx, user)
 }

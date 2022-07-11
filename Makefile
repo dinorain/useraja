@@ -2,10 +2,10 @@
 # Main
 
 run:
-	go run ./cmd/auth/main.go
+	go run ./cmd/http/main.go
 
 build:
-	go build ./cmd/auth/main.go
+	go build ./cmd/http/main.go
 
 test:
 	go test -cover ./...
