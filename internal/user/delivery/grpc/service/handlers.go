@@ -110,7 +110,7 @@ func (u *usersServiceGRPC) GetMe(ctx context.Context, r *userService.GetMeReques
 	if err != nil {
 		u.logger.Errorf("sessUC.GetSessionByID: %v", err)
 		if errors.Is(err, redis.Nil) {
-			return nil, status.Errorf(codes.NotFound, "sessUC.GetSessionByID: %v", grpc_errors.ErrNotFound)
+			return nil, status.Errorf(codes.NotFound, "sessUC.GetSessionByID: %v", err)
 		}
 		return nil, status.Errorf(grpc_errors.ParseGRPCErrStatusCode(err), "sessUC.GetSessionByID: %v", err)
 	}

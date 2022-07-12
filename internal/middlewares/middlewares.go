@@ -11,6 +11,7 @@ import (
 
 	"github.com/dinorain/useraja/config"
 	"github.com/dinorain/useraja/internal/models"
+	httpErrors "github.com/dinorain/useraja/pkg/http_errors"
 	"github.com/dinorain/useraja/pkg/logger"
 )
 
@@ -56,7 +57,7 @@ func (mw *middlewareManager) IsAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		if role != models.UserRoleAdmin {
-			return echo.ErrForbidden
+			return httpErrors.NewForbiddenError(c, nil, mw.cfg.Http.DebugErrorsResponse)
 		}
 
 		return next(c)
