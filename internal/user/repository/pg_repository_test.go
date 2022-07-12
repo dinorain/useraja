@@ -29,13 +29,13 @@ func TestUserRepository_Create(t *testing.T) {
 	columns := []string{"user_id", "first_name", "last_name", "email", "password", "avatar", "role", "created_at", "updated_at"}
 	userUUID := uuid.New()
 	mockUser := &models.User{
-		UserID:    userUUID,
-		Email:     "email@gmail.com",
-		FirstName: "FirstName",
-		LastName:  "LastName",
-		Role:      "admin",
-		Avatar:    nil,
-		Password:  "123456",
+		UserID:          userUUID,
+		Email:           "email@gmail.com",
+		FirstName:       "FirstName",
+		LastName:        "LastName",
+		Role:            "admin",
+		Avatar:          nil,
+		Password:        "123456",
 	}
 
 	rows := sqlmock.NewRows(columns).AddRow(
@@ -79,13 +79,13 @@ func TestUserRepository_FindByEmail(t *testing.T) {
 	columns := []string{"user_id", "first_name", "last_name", "email", "password", "avatar", "role", "created_at", "updated_at"}
 	userUUID := uuid.New()
 	mockUser := &models.User{
-		UserID:    userUUID,
-		Email:     "email@gmail.com",
-		FirstName: "FirstName",
-		LastName:  "LastName",
-		Role:      "admin",
-		Avatar:    nil,
-		Password:  "123456",
+		UserID:          userUUID,
+		Email:           "email@gmail.com",
+		FirstName:       "FirstName",
+		LastName:        "LastName",
+		Role:            "admin",
+		Avatar:          nil,
+		Password:        "123456",
 	}
 
 	rows := sqlmock.NewRows(columns).AddRow(
@@ -123,13 +123,13 @@ func TestUserRepository_FindAll(t *testing.T) {
 	columns := []string{"user_id", "first_name", "last_name", "email", "password", "avatar", "role", "created_at", "updated_at"}
 	userUUID := uuid.New()
 	mockUser := &models.User{
-		UserID:    userUUID,
-		Email:     "email@gmail.com",
-		FirstName: "FirstName",
-		LastName:  "LastName",
-		Role:      "admin",
-		Avatar:    nil,
-		Password:  "123456",
+		UserID:          userUUID,
+		Email:           "email@gmail.com",
+		FirstName:       "FirstName",
+		LastName:        "LastName",
+		Role:            "admin",
+		Avatar:          nil,
+		Password:        "123456",
 	}
 
 	rows := sqlmock.NewRows(columns).AddRow(
@@ -172,13 +172,13 @@ func TestUserRepository_FindById(t *testing.T) {
 	columns := []string{"user_id", "first_name", "last_name", "email", "password", "avatar", "role", "created_at", "updated_at"}
 	userUUID := uuid.New()
 	mockUser := &models.User{
-		UserID:    userUUID,
-		Email:     "email@gmail.com",
-		FirstName: "FirstName",
-		LastName:  "LastName",
-		Role:      "admin",
-		Avatar:    nil,
-		Password:  "123456",
+		UserID:          userUUID,
+		Email:           "email@gmail.com",
+		FirstName:       "FirstName",
+		LastName:        "LastName",
+		Role:            "admin",
+		Avatar:          nil,
+		Password:        "123456",
 	}
 
 	rows := sqlmock.NewRows(columns).AddRow(
@@ -216,13 +216,13 @@ func TestUserRepository_UpdateById(t *testing.T) {
 	columns := []string{"user_id", "first_name", "last_name", "email", "password", "avatar", "role", "created_at", "updated_at"}
 	userUUID := uuid.New()
 	mockUser := &models.User{
-		UserID:    userUUID,
-		Email:     "email@gmail.com",
-		FirstName: "FirstName",
-		LastName:  "LastName",
-		Role:      "admin",
-		Avatar:    nil,
-		Password:  "123456",
+		UserID:          userUUID,
+		Email:           "email@gmail.com",
+		FirstName:       "FirstName",
+		LastName:        "LastName",
+		Role:            "admin",
+		Avatar:          nil,
+		Password:        "123456",
 	}
 
 	_ = sqlmock.NewRows(columns).AddRow(
@@ -270,13 +270,13 @@ func TestUserRepository_DeleteById(t *testing.T) {
 	columns := []string{"user_id", "first_name", "last_name", "email", "password", "avatar", "role", "created_at", "updated_at"}
 	userUUID := uuid.New()
 	mockUser := &models.User{
-		UserID:    userUUID,
-		Email:     "email@gmail.com",
-		FirstName: "FirstName",
-		LastName:  "LastName",
-		Role:      "admin",
-		Avatar:    nil,
-		Password:  "123456",
+		UserID:          userUUID,
+		Email:           "email@gmail.com",
+		FirstName:       "FirstName",
+		LastName:        "LastName",
+		Role:            "admin",
+		Avatar:          nil,
+		Password:        "123456",
 	}
 
 	_ = sqlmock.NewRows(columns).AddRow(

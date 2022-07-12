@@ -49,7 +49,7 @@ func NewUserHandlersHTTP(
 // Register
 // @Tags Users
 // @Summary To register user
-// @Description To create user, admin only
+// @Description Admin create user
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
@@ -146,7 +146,7 @@ func (h *userHandlersHTTP) Login() echo.HandlerFunc {
 // FindAll
 // @Tags Users
 // @Summary Find all users
-// @Description Find all users, admin only
+// @Description Admin find all users
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
@@ -225,6 +225,16 @@ func (h *userHandlersHTTP) UpdateByID() echo.HandlerFunc {
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
 		}
 
+		_, userID, role, err := h.getSessionIDFromCtx(c)
+		if err != nil {
+			h.logger.Errorf("getSessionIDFromCtx: %v", err)
+			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
+		}
+
+		if role != models.UserRoleAdmin && userID != userUUID.String() {
+			return httpErrors.NewForbiddenError(c, err, h.cfg.Http.DebugErrorsResponse)
+		}
+
 		updateDto := &dto.UserUpdateRequestDto{}
 		if err := c.Bind(updateDto); err != nil {
 			h.logger.WarnMsg("bind", err)
@@ -299,7 +309,7 @@ func (h *userHandlersHTTP) DeleteByID() echo.HandlerFunc {
 func (h *userHandlersHTTP) GetMe() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := c.Request().Context()
-		sessID, err := h.getSessionIDFromCtx(c)
+		sessID, _, _, err := h.getSessionIDFromCtx(c)
 		if err != nil {
 			h.logger.Errorf("getSessionIDFromCtx: %v", err)
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
@@ -309,7 +319,7 @@ func (h *userHandlersHTTP) GetMe() echo.HandlerFunc {
 		if err != nil {
 			h.logger.Errorf("sessUC.GetSessionByID: %v", err)
 			if errors.Is(err, redis.Nil) {
-				return echo.ErrUnauthorized
+				return httpErrors.NewUnauthorizedError(c, err, h.cfg.Http.DebugErrorsResponse)
 			}
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
 		}
@@ -336,7 +346,7 @@ func (h *userHandlersHTTP) GetMe() echo.HandlerFunc {
 func (h *userHandlersHTTP) Logout() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := c.Request().Context()
-		sessID, err := h.getSessionIDFromCtx(c)
+		sessID, _, _, err := h.getSessionIDFromCtx(c)
 		if err != nil {
 			h.logger.Errorf("getSessionIDFromCtx: %v", err)
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
@@ -428,36 +438,48 @@ func (h *userHandlersHTTP) RefreshToken() echo.HandlerFunc {
 	}
 }
 
-func (h *userHandlersHTTP) getSessionIDFromCtx(c echo.Context) (string, error) {
+func (h *userHandlersHTTP) getSessionIDFromCtx(c echo.Context) (sessionID string, userID string, role string, err error) {
 	user, ok := c.Get("user").(*jwt.Token)
 	if !ok {
 		h.logger.Warnf("jwt.Token: %+v", c.Get("user"))
-		return "", errors.New("invalid token header")
+		return "", "", "", errors.New("invalid token header")
 	}
 
 	claims, ok := user.Claims.(jwt.MapClaims)
 	if !ok {
 		h.logger.Warnf("jwt.MapClaims: %+v", c.Get("user"))
-		return "", errors.New("invalid token header")
+		return "", "", "", errors.New("invalid token header")
 	}
 
-	sessionID, ok := claims["session_id"].(string)
+	sessionID, ok = claims["session_id"].(string)
 	if !ok {
 		h.logger.Warnf("session_id: %+v", claims)
-		return "", errors.New("invalid token header")
+		return "", "", "", errors.New("invalid token header")
 	}
 
-	return sessionID, nil
+	userID, ok = claims["user_id"].(string)
+	if !ok {
+		h.logger.Warnf("user_id: %+v", claims)
+		return "", "", "", errors.New("invalid token header")
+	}
+
+	role, ok = claims["role"].(string)
+	if !ok {
+		h.logger.Warnf("role: %+v", claims)
+		return "", "", "", errors.New("invalid token header")
+	}
+
+	return sessionID, role, userID, nil
 }
 
 func (h *userHandlersHTTP) registerReqToUserModel(r *dto.UserRegisterRequestDto) (*models.User, error) {
 	userCandidate := &models.User{
-		Email:     r.Email,
-		FirstName: r.FirstName,
-		LastName:  r.LastName,
-		Role:      r.Role,
-		Avatar:    nil,
-		Password:  r.Password,
+		Email:           r.Email,
+		FirstName:       r.FirstName,
+		LastName:        r.LastName,
+		Role:            r.Role,
+		Avatar:          nil,
+		Password:        r.Password,
 	}
 
 	if err := userCandidate.PrepareCreate(); err != nil {

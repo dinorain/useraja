@@ -38,7 +38,7 @@ func (r *UserRepository) Create(ctx context.Context, user *models.User) (*models
 		user.Role,
 		user.Avatar,
 	).StructScan(createdUser); err != nil {
-		return nil, errors.Wrap(err, "Create.QueryRowxContext")
+		return nil, errors.Wrap(err, "UserRepository.Create.QueryRowxContext")
 	}
 
 	return createdUser, nil
@@ -57,11 +57,11 @@ func (r *UserRepository) UpdateById(ctx context.Context, user *models.User) (*mo
 		user.Role,
 		user.Avatar,
 	); err != nil {
-		return nil, errors.Wrap(err, "Update.ExecContext")
+		return nil, errors.Wrap(err, "UserRepository.Update.ExecContext")
 	} else {
 		_, err := res.RowsAffected()
 		if err != nil {
-			return nil, errors.Wrap(err, "Update.RowsAffected")
+			return nil, errors.Wrap(err, "UserRepository.Update.RowsAffected")
 		}
 	}
 
@@ -72,7 +72,7 @@ func (r *UserRepository) UpdateById(ctx context.Context, user *models.User) (*mo
 func (r *UserRepository) FindAll(ctx context.Context, pagination *utils.Pagination) ([]models.User, error) {
 	var users []models.User
 	if err := r.db.SelectContext(ctx, &users, findAllQuery, pagination.GetLimit(), pagination.GetOffset()); err != nil {
-		return nil, errors.Wrap(err, "FindById.SelectContext")
+		return nil, errors.Wrap(err, "UserRepository.FindById.SelectContext")
 	}
 
 	return users, nil
@@ -82,7 +82,7 @@ func (r *UserRepository) FindAll(ctx context.Context, pagination *utils.Paginati
 func (r *UserRepository) FindByEmail(ctx context.Context, email string) (*models.User, error) {
 	user := &models.User{}
 	if err := r.db.GetContext(ctx, user, findByEmailQuery, email); err != nil {
-		return nil, errors.Wrap(err, "FindByEmail.GetContext")
+		return nil, errors.Wrap(err, "UserRepository.FindByEmail.GetContext")
 	}
 
 	return user, nil
@@ -92,7 +92,7 @@ func (r *UserRepository) FindByEmail(ctx context.Context, email string) (*models
 func (r *UserRepository) FindById(ctx context.Context, userID uuid.UUID) (*models.User, error) {
 	user := &models.User{}
 	if err := r.db.GetContext(ctx, user, findByIDQuery, userID); err != nil {
-		return nil, errors.Wrap(err, "FindById.GetContext")
+		return nil, errors.Wrap(err, "UserRepository.FindById.GetContext")
 	}
 
 	return user, nil
@@ -101,11 +101,11 @@ func (r *UserRepository) FindById(ctx context.Context, userID uuid.UUID) (*model
 // DeleteById Find user by uuid
 func (r *UserRepository) DeleteById(ctx context.Context, userID uuid.UUID) error {
 	if res, err := r.db.ExecContext(ctx, deleteByIDQuery, userID); err != nil {
-		return errors.Wrap(err, "DeleteById.ExecContext")
+		return errors.Wrap(err, "UserRepository.DeleteById.ExecContext")
 	} else {
 		cnt, err := res.RowsAffected()
 		if err != nil {
-			return errors.Wrap(err, "DeleteById.RowsAffected")
+			return errors.Wrap(err, "UserRepository.DeleteById.RowsAffected")
 		} else if cnt == 0 {
 			return sql.ErrNoRows
 		}
