@@ -27,7 +27,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Find all users, admin only",
+                "description": "Admin find all users",
                 "consumes": [
                     "application/json"
                 ],
@@ -67,7 +67,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "To create user, admin only",
+                "description": "Admin create user",
                 "consumes": [
                     "application/json"
                 ],

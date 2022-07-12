@@ -123,7 +123,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Find all users, admin only
+      description: Admin find all users
       parameters:
       - description: pagination size
         in: query
@@ -148,7 +148,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: To create user, admin only
+      description: Admin create user
       parameters:
       - description: Payload
         in: body
