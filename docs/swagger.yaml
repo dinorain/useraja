@@ -1,11 +1,11 @@
 definitions:
-  dto.FindUserResponseDto:
+  dto.UserFindResponseDto:
     properties:
       data: {}
       meta:
         $ref: '#/definitions/utils.PaginationMetaDto'
     type: object
-  dto.LoginRequestDto:
+  dto.UserLoginRequestDto:
     properties:
       email:
         maxLength: 60
@@ -16,24 +16,24 @@ definitions:
     - email
     - password
     type: object
-  dto.LoginResponseDto:
+  dto.UserLoginResponseDto:
     properties:
       tokens:
-        $ref: '#/definitions/dto.RefreshTokenResponseDto'
+        $ref: '#/definitions/dto.UserRefreshTokenResponseDto'
       user_id:
         type: string
     required:
     - tokens
     - user_id
     type: object
-  dto.RefreshTokenDto:
+  dto.UserRefreshTokenDto:
     properties:
       refresh_token:
         type: string
     required:
     - refresh_token
     type: object
-  dto.RefreshTokenResponseDto:
+  dto.UserRefreshTokenResponseDto:
     properties:
       access_token:
         type: string
@@ -43,10 +43,8 @@ definitions:
     - access_token
     - refresh_token
     type: object
-  dto.RegisterRequestDto:
+  dto.UserRegisterRequestDto:
     properties:
-      avatar:
-        type: string
       email:
         maxLength: 60
         type: string
@@ -67,7 +65,7 @@ definitions:
     - password
     - role
     type: object
-  dto.RegisterResponseDto:
+  dto.UserRegisterResponseDto:
     properties:
       user_id:
         type: string
@@ -91,6 +89,19 @@ definitions:
       updated_at:
         type: string
       user_id:
+        type: string
+    type: object
+  dto.UserUpdateRequestDto:
+    properties:
+      avatar:
+        type: string
+      first_name:
+        maxLength: 30
+        type: string
+      last_name:
+        maxLength: 30
+        type: string
+      password:
         type: string
     type: object
   utils.PaginationMetaDto:
@@ -128,7 +139,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.FindUserResponseDto'
+            $ref: '#/definitions/dto.UserFindResponseDto'
       security:
       - ApiKeyAuth: []
       summary: Find all users
@@ -144,14 +155,14 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/dto.RegisterRequestDto'
+          $ref: '#/definitions/dto.UserRegisterRequestDto'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.RegisterResponseDto'
+            $ref: '#/definitions/dto.UserRegisterResponseDto'
       security:
       - ApiKeyAuth: []
       summary: To register user
@@ -204,6 +215,12 @@ paths:
         name: id
         required: true
         type: string
+      - description: Payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UserUpdateRequestDto'
       produces:
       - application/json
       responses:
@@ -227,14 +244,14 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/dto.LoginRequestDto'
+          $ref: '#/definitions/dto.UserLoginRequestDto'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.LoginResponseDto'
+            $ref: '#/definitions/dto.UserLoginResponseDto'
       summary: User login
       tags:
       - Users
@@ -281,14 +298,14 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/dto.RefreshTokenDto'
+          $ref: '#/definitions/dto.UserRefreshTokenDto'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.RefreshTokenResponseDto'
+            $ref: '#/definitions/dto.UserRefreshTokenResponseDto'
       summary: Refresh access token
       tags:
       - Users

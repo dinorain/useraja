@@ -53,14 +53,14 @@ func NewUserHandlersHTTP(
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
-// @Param payload body dto.RegisterRequestDto true "Payload"
-// @Success 200 {object} dto.RegisterResponseDto
+// @Param payload body dto.UserRegisterRequestDto true "Payload"
+// @Success 200 {object} dto.UserRegisterResponseDto
 // @Router /user [post]
 func (h *userHandlersHTTP) Register() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := c.Request().Context()
 
-		createDto := &dto.RegisterRequestDto{}
+		createDto := &dto.UserRegisterRequestDto{}
 		if err := c.Bind(createDto); err != nil {
 			h.logger.WarnMsg("bind", err)
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
@@ -83,7 +83,7 @@ func (h *userHandlersHTTP) Register() echo.HandlerFunc {
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
 		}
 
-		return c.JSON(http.StatusCreated, dto.RegisterResponseDto{UserID: createdUser.UserID})
+		return c.JSON(http.StatusCreated, dto.UserRegisterResponseDto{UserID: createdUser.UserID})
 	}
 }
 
@@ -93,14 +93,14 @@ func (h *userHandlersHTTP) Register() echo.HandlerFunc {
 // @Description User login with email and password
 // @Accept json
 // @Produce json
-// @Param payload body dto.LoginRequestDto true "Payload"
-// @Success 200 {object} dto.LoginResponseDto
+// @Param payload body dto.UserLoginRequestDto true "Payload"
+// @Success 200 {object} dto.UserLoginResponseDto
 // @Router /user/login [post]
 func (h *userHandlersHTTP) Login() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := c.Request().Context()
 
-		loginDto := &dto.LoginRequestDto{}
+		loginDto := &dto.UserLoginRequestDto{}
 		if err := c.Bind(loginDto); err != nil {
 			h.logger.WarnMsg("bind", err)
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
@@ -136,7 +136,7 @@ func (h *userHandlersHTTP) Login() echo.HandlerFunc {
 			return err
 		}
 
-		return c.JSON(http.StatusCreated, dto.LoginResponseDto{UserID: user.UserID, Tokens: &dto.RefreshTokenResponseDto{
+		return c.JSON(http.StatusCreated, dto.UserLoginResponseDto{UserID: user.UserID, Tokens: &dto.UserRefreshTokenResponseDto{
 			AccessToken:  accessToken,
 			RefreshToken: refreshToken,
 		}})
@@ -152,7 +152,7 @@ func (h *userHandlersHTTP) Login() echo.HandlerFunc {
 // @Security ApiKeyAuth
 // @Param size query string false "pagination size"
 // @Param page query string false "pagination page"
-// @Success 200 {object} dto.FindUserResponseDto
+// @Success 200 {object} dto.UserFindResponseDto
 // @Router /user [get]
 func (h *userHandlersHTTP) FindAll() echo.HandlerFunc {
 	return func(c echo.Context) error {
@@ -164,7 +164,7 @@ func (h *userHandlersHTTP) FindAll() echo.HandlerFunc {
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
 		}
 
-		return c.JSON(http.StatusOK, dto.FindUserResponseDto{
+		return c.JSON(http.StatusOK, dto.UserFindResponseDto{
 			Data: users,
 			Meta: utils.PaginationMetaDto{
 				Limit:  pq.GetLimit(),
@@ -212,6 +212,7 @@ func (h *userHandlersHTTP) FindByID() echo.HandlerFunc {
 // @Produce json
 // @Security ApiKeyAuth
 // @Param id path string true "User ID"
+// @Param payload body dto.UserUpdateRequestDto true "Payload"
 // @Success 200 {object} dto.UserResponseDto
 // @Router /user/{id} [put]
 func (h *userHandlersHTTP) UpdateByID() echo.HandlerFunc {
@@ -224,7 +225,7 @@ func (h *userHandlersHTTP) UpdateByID() echo.HandlerFunc {
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
 		}
 
-		updateDto := &dto.UpdateRequestDto{}
+		updateDto := &dto.UserUpdateRequestDto{}
 		if err := c.Bind(updateDto); err != nil {
 			h.logger.WarnMsg("bind", err)
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
@@ -356,14 +357,14 @@ func (h *userHandlersHTTP) Logout() echo.HandlerFunc {
 // @Description Refresh access token
 // @Accept json
 // @Produce json
-// @Param payload body dto.RefreshTokenDto true "Payload"
-// @Success 200 {object} dto.RefreshTokenResponseDto
+// @Param payload body dto.UserRefreshTokenDto true "Payload"
+// @Success 200 {object} dto.UserRefreshTokenResponseDto
 // @Router /user/refresh [post]
 func (h *userHandlersHTTP) RefreshToken() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := c.Request().Context()
 
-		refreshTokenDto := &dto.RefreshTokenDto{}
+		refreshTokenDto := &dto.UserRefreshTokenDto{}
 		if err := c.Bind(refreshTokenDto); err != nil {
 			h.logger.WarnMsg("bind", err)
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
@@ -420,7 +421,7 @@ func (h *userHandlersHTTP) RefreshToken() echo.HandlerFunc {
 			return err
 		}
 
-		return c.JSON(http.StatusOK, dto.RefreshTokenResponseDto{
+		return c.JSON(http.StatusOK, dto.UserRefreshTokenResponseDto{
 			AccessToken:  accessToken,
 			RefreshToken: refreshToken,
 		})
@@ -449,13 +450,13 @@ func (h *userHandlersHTTP) getSessionIDFromCtx(c echo.Context) (string, error) {
 	return sessionID, nil
 }
 
-func (h *userHandlersHTTP) registerReqToUserModel(r *dto.RegisterRequestDto) (*models.User, error) {
+func (h *userHandlersHTTP) registerReqToUserModel(r *dto.UserRegisterRequestDto) (*models.User, error) {
 	userCandidate := &models.User{
 		Email:     r.Email,
 		FirstName: r.FirstName,
 		LastName:  r.LastName,
 		Role:      r.Role,
-		Avatar:    &r.Avatar,
+		Avatar:    nil,
 		Password:  r.Password,
 	}
 
@@ -466,13 +467,17 @@ func (h *userHandlersHTTP) registerReqToUserModel(r *dto.RegisterRequestDto) (*m
 	return userCandidate, nil
 }
 
-func (h *userHandlersHTTP) updateReqToUserModel(updateCandidate *models.User, r *dto.UpdateRequestDto) (*models.User, error) {
+func (h *userHandlersHTTP) updateReqToUserModel(updateCandidate *models.User, r *dto.UserUpdateRequestDto) (*models.User, error) {
 
 	if r.FirstName != nil {
 		updateCandidate.FirstName = strings.TrimSpace(*r.FirstName)
 	}
 	if r.LastName != nil {
 		updateCandidate.LastName = strings.TrimSpace(*r.LastName)
+	}
+	if r.Avatar != nil {
+		avatar := strings.TrimSpace(*r.Avatar)
+		updateCandidate.Avatar = &avatar
 	}
 	if r.Password != nil {
 		updateCandidate.Password = *r.Password

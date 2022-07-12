@@ -245,7 +245,8 @@ func TestUserRepository_UpdateById(t *testing.T) {
 		mockUser.Email,
 		mockUser.Password,
 		mockUser.Role,
-		mockUser.Avatar).WillReturnResult(sqlmock.NewResult(0, 1))
+		mockUser.Avatar,
+	).WillReturnResult(sqlmock.NewResult(0, 1))
 
 	updatedUser, err := userPGRepository.UpdateById(context.Background(), mockUser)
 	require.NoError(t, err)

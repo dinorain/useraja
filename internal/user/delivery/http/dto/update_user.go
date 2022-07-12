@@ -1,6 +1,6 @@
 package dto
 
-type UpdateRequestDto struct {
+type UserUpdateRequestDto struct {
 	FirstName *string `json:"first_name" validate:"omitempty,lte=30"`
 	LastName  *string `json:"last_name" validate:"omitempty,lte=30"`
 	Password  *string `json:"password" validate:"omitempty"`

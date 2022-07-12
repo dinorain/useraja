@@ -1,10 +1,10 @@
 package dto
 
-type RefreshTokenDto struct {
+type UserRefreshTokenDto struct {
 	RefreshToken string `json:"refresh_token" validate:"required"`
 }
 
-type RefreshTokenResponseDto struct {
+type UserRefreshTokenResponseDto struct {
 	AccessToken  string `json:"access_token" validate:"required"`
 	RefreshToken string `json:"refresh_token" validate:"required"`
 }

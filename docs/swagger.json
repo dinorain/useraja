@@ -44,7 +44,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.FindUserResponseDto"
+                            "$ref": "#/definitions/dto.UserFindResponseDto"
                         }
                     }
                 }
@@ -73,7 +73,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.RegisterRequestDto"
+                            "$ref": "#/definitions/dto.UserRegisterRequestDto"
                         }
                     }
                 ],
@@ -81,7 +81,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.RegisterResponseDto"
+                            "$ref": "#/definitions/dto.UserRegisterResponseDto"
                         }
                     }
                 }
@@ -107,7 +107,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.LoginRequestDto"
+                            "$ref": "#/definitions/dto.UserLoginRequestDto"
                         }
                     }
                 ],
@@ -115,7 +115,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.LoginResponseDto"
+                            "$ref": "#/definitions/dto.UserLoginResponseDto"
                         }
                     }
                 }
@@ -194,7 +194,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.RefreshTokenDto"
+                            "$ref": "#/definitions/dto.UserRefreshTokenDto"
                         }
                     }
                 ],
@@ -202,7 +202,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.RefreshTokenResponseDto"
+                            "$ref": "#/definitions/dto.UserRefreshTokenResponseDto"
                         }
                     }
                 }
@@ -259,6 +259,15 @@
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UserUpdateRequestDto"
+                        }
                     }
                 ],
                 "responses": {
@@ -305,7 +314,7 @@
         }
     },
     "definitions": {
-        "dto.FindUserResponseDto": {
+        "dto.UserFindResponseDto": {
             "type": "object",
             "properties": {
                 "data": {},
@@ -314,7 +323,7 @@
                 }
             }
         },
-        "dto.LoginRequestDto": {
+        "dto.UserLoginRequestDto": {
             "type": "object",
             "required": [
                 "email",
@@ -330,7 +339,7 @@
                 }
             }
         },
-        "dto.LoginResponseDto": {
+        "dto.UserLoginResponseDto": {
             "type": "object",
             "required": [
                 "tokens",
@@ -338,14 +347,14 @@
             ],
             "properties": {
                 "tokens": {
-                    "$ref": "#/definitions/dto.RefreshTokenResponseDto"
+                    "$ref": "#/definitions/dto.UserRefreshTokenResponseDto"
                 },
                 "user_id": {
                     "type": "string"
                 }
             }
         },
-        "dto.RefreshTokenDto": {
+        "dto.UserRefreshTokenDto": {
             "type": "object",
             "required": [
                 "refresh_token"
@@ -356,7 +365,7 @@
                 }
             }
         },
-        "dto.RefreshTokenResponseDto": {
+        "dto.UserRefreshTokenResponseDto": {
             "type": "object",
             "required": [
                 "access_token",
@@ -371,7 +380,7 @@
                 }
             }
         },
-        "dto.RegisterRequestDto": {
+        "dto.UserRegisterRequestDto": {
             "type": "object",
             "required": [
                 "email",
@@ -381,9 +390,6 @@
                 "role"
             ],
             "properties": {
-                "avatar": {
-                    "type": "string"
-                },
                 "email": {
                     "type": "string",
                     "maxLength": 60
@@ -404,7 +410,7 @@
                 }
             }
         },
-        "dto.RegisterResponseDto": {
+        "dto.UserRegisterResponseDto": {
             "type": "object",
             "required": [
                 "user_id"
@@ -440,6 +446,25 @@
                     "type": "string"
                 },
                 "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UserUpdateRequestDto": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string",
+                    "maxLength": 30
+                },
+                "last_name": {
+                    "type": "string",
+                    "maxLength": 30
+                },
+                "password": {
                     "type": "string"
                 }
             }

@@ -56,7 +56,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.FindUserResponseDto"
+                            "$ref": "#/definitions/dto.UserFindResponseDto"
                         }
                     }
                 }
@@ -85,7 +85,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.RegisterRequestDto"
+                            "$ref": "#/definitions/dto.UserRegisterRequestDto"
                         }
                     }
                 ],
@@ -93,7 +93,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.RegisterResponseDto"
+                            "$ref": "#/definitions/dto.UserRegisterResponseDto"
                         }
                     }
                 }
@@ -119,7 +119,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.LoginRequestDto"
+                            "$ref": "#/definitions/dto.UserLoginRequestDto"
                         }
                     }
                 ],
@@ -127,7 +127,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.LoginResponseDto"
+                            "$ref": "#/definitions/dto.UserLoginResponseDto"
                         }
                     }
                 }
@@ -206,7 +206,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.RefreshTokenDto"
+                            "$ref": "#/definitions/dto.UserRefreshTokenDto"
                         }
                     }
                 ],
@@ -214,7 +214,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.RefreshTokenResponseDto"
+                            "$ref": "#/definitions/dto.UserRefreshTokenResponseDto"
                         }
                     }
                 }
@@ -271,6 +271,15 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UserUpdateRequestDto"
+                        }
                     }
                 ],
                 "responses": {
@@ -317,7 +326,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "dto.FindUserResponseDto": {
+        "dto.UserFindResponseDto": {
             "type": "object",
             "properties": {
                 "data": {},
@@ -326,7 +335,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.LoginRequestDto": {
+        "dto.UserLoginRequestDto": {
             "type": "object",
             "required": [
                 "email",
@@ -342,7 +351,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.LoginResponseDto": {
+        "dto.UserLoginResponseDto": {
             "type": "object",
             "required": [
                 "tokens",
@@ -350,14 +359,14 @@ const docTemplate = `{
             ],
             "properties": {
                 "tokens": {
-                    "$ref": "#/definitions/dto.RefreshTokenResponseDto"
+                    "$ref": "#/definitions/dto.UserRefreshTokenResponseDto"
                 },
                 "user_id": {
                     "type": "string"
                 }
             }
         },
-        "dto.RefreshTokenDto": {
+        "dto.UserRefreshTokenDto": {
             "type": "object",
             "required": [
                 "refresh_token"
@@ -368,7 +377,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.RefreshTokenResponseDto": {
+        "dto.UserRefreshTokenResponseDto": {
             "type": "object",
             "required": [
                 "access_token",
@@ -383,7 +392,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.RegisterRequestDto": {
+        "dto.UserRegisterRequestDto": {
             "type": "object",
             "required": [
                 "email",
@@ -393,9 +402,6 @@ const docTemplate = `{
                 "role"
             ],
             "properties": {
-                "avatar": {
-                    "type": "string"
-                },
                 "email": {
                     "type": "string",
                     "maxLength": 60
@@ -416,7 +422,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.RegisterResponseDto": {
+        "dto.UserRegisterResponseDto": {
             "type": "object",
             "required": [
                 "user_id"
@@ -452,6 +458,25 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UserUpdateRequestDto": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string",
+                    "maxLength": 30
+                },
+                "last_name": {
+                    "type": "string",
+                    "maxLength": 30
+                },
+                "password": {
                     "type": "string"
                 }
             }

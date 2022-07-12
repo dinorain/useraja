@@ -7,7 +7,7 @@ import (
 	"github.com/dinorain/useraja/internal/models"
 )
 
-// Auth Redis repository interface
+// User Redis repository interface
 type UserRedisRepository interface {
 	GetByIDCtx(ctx context.Context, key string) (*models.User, error)
 	SetUserCtx(ctx context.Context, key string, seconds int, user *models.User) error

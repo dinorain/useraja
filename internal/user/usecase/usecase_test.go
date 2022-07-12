@@ -124,6 +124,40 @@ func TestUserUseCase_Login(t *testing.T) {
 	require.NotNil(t, err)
 }
 
+func TestUserUseCase_FindByAll(t *testing.T) {
+	t.Parallel()
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	userPGRepository := mock.NewMockUserPGRepository(ctrl)
+	userRedisRepository := mock.NewMockUserRedisRepository(ctrl)
+	apiLogger := logger.NewAppLogger(nil)
+
+	cfg := &config.Config{}
+	userUC := NewUserUseCase(cfg, apiLogger, userPGRepository, userRedisRepository)
+
+	userID := uuid.New()
+	mockUser := &models.User{
+		UserID:    userID,
+		Email:     "email@gmail.com",
+		FirstName: "FirstName",
+		LastName:  "LastName",
+		Role:      "admin",
+		Avatar:    nil,
+		Password:  "123456",
+	}
+
+	ctx := context.Background()
+
+	userPGRepository.EXPECT().FindAll(gomock.Any(), nil).AnyTimes().Return(append([]models.User{}, *mockUser), nil)
+
+	users, err := userUC.FindAll(ctx, nil)
+	require.NoError(t, err)
+	require.NotNil(t, users)
+	require.Equal(t, len(users), 1)
+}
+
 func TestUserUseCase_FindById(t *testing.T) {
 	t.Parallel()
 
