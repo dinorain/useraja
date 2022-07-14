@@ -419,11 +419,7 @@ func (h *userHandlersHTTP) RefreshToken() echo.HandlerFunc {
 		if err != nil {
 			h.logger.Errorf("sessUC.GetSessionById: %v", err)
 			if errors.Is(err, redis.Nil) {
-<<<<<<< HEAD:internal/user/delivery/http/handlers/handlers.go
 				return httpErrors.NewUnauthorizedError(c, nil, h.cfg.Http.DebugErrorsResponse)
-=======
-				return httpErrors.NewUnauthorizedError(c, err, h.cfg.Http.DebugErrorsResponse)
->>>>>>> 2bddc7b38e5209790827e8b41b0da2d444324be8:internal/user/delivery/http/service/handlers.go
 			}
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
 		}
