@@ -29,7 +29,7 @@ func NewUserRedisRepo(redisClient *redis.Client, logger logger.Logger) *userRedi
 }
 
 // Get user by id
-func (r *userRedisRepo) GetByIDCtx(ctx context.Context, key string) (*models.User, error) {
+func (r *userRedisRepo) GetByIdCtx(ctx context.Context, key string) (*models.User, error) {
 	userBytes, err := r.redisClient.Get(ctx, r.createKey(key)).Bytes()
 	if err != nil {
 		if err != redis.Nil {

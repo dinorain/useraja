@@ -27,11 +27,11 @@ func (u *sessionUC) CreateSession(ctx context.Context, session *models.Session, 
 }
 
 // Delete session by id
-func (u *sessionUC) DeleteByID(ctx context.Context, sessionID string) error {
-	return u.sessionRepo.DeleteByID(ctx, sessionID)
+func (u *sessionUC) DeleteById(ctx context.Context, sessionID string) error {
+	return u.sessionRepo.DeleteById(ctx, sessionID)
 }
 
 // get session by id
-func (u *sessionUC) GetSessionByID(ctx context.Context, sessionID string) (*models.Session, error) {
-	return u.sessionRepo.GetSessionByID(ctx, sessionID)
+func (u *sessionUC) GetSessionById(ctx context.Context, sessionID string) (*models.Session, error) {
+	return u.sessionRepo.GetSessionById(ctx, sessionID)
 }

@@ -32,7 +32,7 @@ func TestSessionUC_CreateSession(t *testing.T) {
 	require.NotEqual(t, createdSess, "")
 }
 
-func TestSessionUC_GetSessionByID(t *testing.T) {
+func TestSessionUC_GetSessionById(t *testing.T) {
 	t.Parallel()
 
 	ctrl := gomock.NewController(t)
@@ -45,15 +45,15 @@ func TestSessionUC_GetSessionByID(t *testing.T) {
 	sess := &models.Session{}
 	sid := "session id"
 
-	mockSessRepo.EXPECT().GetSessionByID(gomock.Any(), gomock.Eq(sid)).Return(sess, nil)
+	mockSessRepo.EXPECT().GetSessionById(gomock.Any(), gomock.Eq(sid)).Return(sess, nil)
 
-	session, err := sessUC.GetSessionByID(ctx, sid)
+	session, err := sessUC.GetSessionById(ctx, sid)
 	require.NoError(t, err)
 	require.Nil(t, err)
 	require.NotNil(t, session)
 }
 
-func TestSessionUC_DeleteByID(t *testing.T) {
+func TestSessionUC_DeleteById(t *testing.T) {
 	t.Parallel()
 
 	ctrl := gomock.NewController(t)
@@ -65,9 +65,9 @@ func TestSessionUC_DeleteByID(t *testing.T) {
 	ctx := context.Background()
 	sid := "session id"
 
-	mockSessRepo.EXPECT().DeleteByID(gomock.Any(), gomock.Eq(sid)).Return(nil)
+	mockSessRepo.EXPECT().DeleteById(gomock.Any(), gomock.Eq(sid)).Return(nil)
 
-	err := sessUC.DeleteByID(ctx, sid)
+	err := sessUC.DeleteById(ctx, sid)
 	require.NoError(t, err)
 	require.Nil(t, err)
 }

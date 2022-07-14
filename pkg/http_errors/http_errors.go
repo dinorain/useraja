@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/pkg/errors"
 
 	"github.com/go-playground/validator"
@@ -183,6 +184,8 @@ func ParseErrors(err error, debug bool) RestErr {
 	case errors.Is(err, Unauthorized):
 		return NewRestError(http.StatusUnauthorized, ErrUnauthorized, err.Error(), debug)
 	case errors.Is(err, WrongCredentials):
+		return NewRestError(http.StatusUnauthorized, ErrUnauthorized, err.Error(), debug)
+	case errors.Is(err, middleware.ErrJWTMissing):
 		return NewRestError(http.StatusUnauthorized, ErrUnauthorized, err.Error(), debug)
 	case strings.Contains(strings.ToLower(err.Error()), "sqlstate"):
 		return parseSqlErrors(err, debug)

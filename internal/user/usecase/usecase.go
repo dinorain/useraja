@@ -80,9 +80,9 @@ func (u *userUseCase) FindById(ctx context.Context, userID uuid.UUID) (*models.U
 
 // CachedFindById find user by uuid from cache
 func (u *userUseCase) CachedFindById(ctx context.Context, userID uuid.UUID) (*models.User, error) {
-	cachedUser, err := u.redisRepo.GetByIDCtx(ctx, userID.String())
+	cachedUser, err := u.redisRepo.GetByIdCtx(ctx, userID.String())
 	if err != nil && !errors.Is(err, redis.Nil) {
-		u.logger.Errorf("redisRepo.GetByIDCtx", err)
+		u.logger.Errorf("redisRepo.GetByIdCtx", err)
 	}
 	if cachedUser != nil {
 		return cachedUser, nil

@@ -50,31 +50,31 @@ func (mr *MockSessUseCaseMockRecorder) CreateSession(ctx, session, expire interf
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSession", reflect.TypeOf((*MockSessUseCase)(nil).CreateSession), ctx, session, expire)
 }
 
-// DeleteByID mocks base method.
-func (m *MockSessUseCase) DeleteByID(ctx context.Context, sessionID string) error {
+// DeleteById mocks base method.
+func (m *MockSessUseCase) DeleteById(ctx context.Context, sessionID string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteByID", ctx, sessionID)
+	ret := m.ctrl.Call(m, "DeleteById", ctx, sessionID)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// DeleteByID indicates an expected call of DeleteByID.
-func (mr *MockSessUseCaseMockRecorder) DeleteByID(ctx, sessionID interface{}) *gomock.Call {
+// DeleteById indicates an expected call of DeleteById.
+func (mr *MockSessUseCaseMockRecorder) DeleteById(ctx, sessionID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteByID", reflect.TypeOf((*MockSessUseCase)(nil).DeleteByID), ctx, sessionID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteById", reflect.TypeOf((*MockSessUseCase)(nil).DeleteById), ctx, sessionID)
 }
 
-// GetSessionByID mocks base method.
-func (m *MockSessUseCase) GetSessionByID(ctx context.Context, sessionID string) (*models.Session, error) {
+// GetSessionById mocks base method.
+func (m *MockSessUseCase) GetSessionById(ctx context.Context, sessionID string) (*models.Session, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetSessionByID", ctx, sessionID)
+	ret := m.ctrl.Call(m, "GetSessionById", ctx, sessionID)
 	ret0, _ := ret[0].(*models.Session)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetSessionByID indicates an expected call of GetSessionByID.
-func (mr *MockSessUseCaseMockRecorder) GetSessionByID(ctx, sessionID interface{}) *gomock.Call {
+// GetSessionById indicates an expected call of GetSessionById.
+func (mr *MockSessUseCaseMockRecorder) GetSessionById(ctx, sessionID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSessionByID", reflect.TypeOf((*MockSessUseCase)(nil).GetSessionByID), ctx, sessionID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSessionById", reflect.TypeOf((*MockSessUseCase)(nil).GetSessionById), ctx, sessionID)
 }

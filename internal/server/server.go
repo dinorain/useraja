@@ -16,7 +16,7 @@ import (
 	"github.com/dinorain/useraja/internal/middlewares"
 	sessRepository "github.com/dinorain/useraja/internal/session/repository"
 	sessUseCase "github.com/dinorain/useraja/internal/session/usecase"
-	userDeliveryHTTP "github.com/dinorain/useraja/internal/user/delivery/http/service"
+	userDeliveryHTTP "github.com/dinorain/useraja/internal/user/delivery/http/handlers"
 	userRepository "github.com/dinorain/useraja/internal/user/repository"
 	userUseCase "github.com/dinorain/useraja/internal/user/usecase"
 	"github.com/dinorain/useraja/pkg/logger"

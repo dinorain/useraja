@@ -49,19 +49,19 @@ func (mr *MockUserRedisRepositoryMockRecorder) DeleteUserCtx(ctx, key interface{
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteUserCtx", reflect.TypeOf((*MockUserRedisRepository)(nil).DeleteUserCtx), ctx, key)
 }
 
-// GetByIDCtx mocks base method.
-func (m *MockUserRedisRepository) GetByIDCtx(ctx context.Context, key string) (*models.User, error) {
+// GetByIdCtx mocks base method.
+func (m *MockUserRedisRepository) GetByIdCtx(ctx context.Context, key string) (*models.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByIDCtx", ctx, key)
+	ret := m.ctrl.Call(m, "GetByIdCtx", ctx, key)
 	ret0, _ := ret[0].(*models.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetByIDCtx indicates an expected call of GetByIDCtx.
-func (mr *MockUserRedisRepositoryMockRecorder) GetByIDCtx(ctx, key interface{}) *gomock.Call {
+// GetByIdCtx indicates an expected call of GetByIdCtx.
+func (mr *MockUserRedisRepositoryMockRecorder) GetByIdCtx(ctx, key interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByIDCtx", reflect.TypeOf((*MockUserRedisRepository)(nil).GetByIDCtx), ctx, key)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByIdCtx", reflect.TypeOf((*MockUserRedisRepository)(nil).GetByIdCtx), ctx, key)
 }
 
 // SetUserCtx mocks base method.

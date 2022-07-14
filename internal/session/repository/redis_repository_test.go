@@ -44,12 +44,12 @@ func TestCreateSession(t *testing.T) {
 	})
 }
 
-func TestGetSessionByID(t *testing.T) {
+func TestGetSessionById(t *testing.T) {
 	t.Parallel()
 
 	sessRepository := SetupRedis()
 
-	t.Run("GetSessionByID", func(t *testing.T) {
+	t.Run("GetSessionById", func(t *testing.T) {
 		sessUUID := uuid.New()
 		sess := &models.Session{
 			SessionID: sessUUID.String(),
@@ -59,7 +59,7 @@ func TestGetSessionByID(t *testing.T) {
 		require.NoError(t, err)
 		require.NotEqual(t, createdSess, "")
 
-		s, err := sessRepository.GetSessionByID(context.Background(), createdSess)
+		s, err := sessRepository.GetSessionById(context.Background(), createdSess)
 		require.NoError(t, err)
 		require.NotEqual(t, s, "")
 	})
@@ -70,9 +70,9 @@ func TestDeleteSession(t *testing.T) {
 
 	sessRepository := SetupRedis()
 
-	t.Run("DeleteByID", func(t *testing.T) {
+	t.Run("DeleteById", func(t *testing.T) {
 		sessUUID := uuid.New()
-		err := sessRepository.DeleteByID(context.Background(), sessUUID.String())
+		err := sessRepository.DeleteById(context.Background(), sessUUID.String())
 		require.NoError(t, err)
 	})
 }

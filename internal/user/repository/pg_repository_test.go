@@ -29,13 +29,13 @@ func TestUserRepository_Create(t *testing.T) {
 	columns := []string{"user_id", "first_name", "last_name", "email", "password", "avatar", "role", "created_at", "updated_at"}
 	userUUID := uuid.New()
 	mockUser := &models.User{
-		UserID:          userUUID,
-		Email:           "email@gmail.com",
-		FirstName:       "FirstName",
-		LastName:        "LastName",
-		Role:            "admin",
-		Avatar:          nil,
-		Password:        "123456",
+		UserID:    userUUID,
+		Email:     "email@gmail.com",
+		FirstName: "FirstName",
+		LastName:  "LastName",
+		Role:      "admin",
+		Avatar:    nil,
+		Password:  "123456",
 	}
 
 	rows := sqlmock.NewRows(columns).AddRow(
@@ -79,13 +79,13 @@ func TestUserRepository_FindByEmail(t *testing.T) {
 	columns := []string{"user_id", "first_name", "last_name", "email", "password", "avatar", "role", "created_at", "updated_at"}
 	userUUID := uuid.New()
 	mockUser := &models.User{
-		UserID:          userUUID,
-		Email:           "email@gmail.com",
-		FirstName:       "FirstName",
-		LastName:        "LastName",
-		Role:            "admin",
-		Avatar:          nil,
-		Password:        "123456",
+		UserID:    userUUID,
+		Email:     "email@gmail.com",
+		FirstName: "FirstName",
+		LastName:  "LastName",
+		Role:      "admin",
+		Avatar:    nil,
+		Password:  "123456",
 	}
 
 	rows := sqlmock.NewRows(columns).AddRow(
@@ -123,13 +123,13 @@ func TestUserRepository_FindAll(t *testing.T) {
 	columns := []string{"user_id", "first_name", "last_name", "email", "password", "avatar", "role", "created_at", "updated_at"}
 	userUUID := uuid.New()
 	mockUser := &models.User{
-		UserID:          userUUID,
-		Email:           "email@gmail.com",
-		FirstName:       "FirstName",
-		LastName:        "LastName",
-		Role:            "admin",
-		Avatar:          nil,
-		Password:        "123456",
+		UserID:    userUUID,
+		Email:     "email@gmail.com",
+		FirstName: "FirstName",
+		LastName:  "LastName",
+		Role:      "admin",
+		Avatar:    nil,
+		Password:  "123456",
 	}
 
 	rows := sqlmock.NewRows(columns).AddRow(
@@ -172,13 +172,13 @@ func TestUserRepository_FindById(t *testing.T) {
 	columns := []string{"user_id", "first_name", "last_name", "email", "password", "avatar", "role", "created_at", "updated_at"}
 	userUUID := uuid.New()
 	mockUser := &models.User{
-		UserID:          userUUID,
-		Email:           "email@gmail.com",
-		FirstName:       "FirstName",
-		LastName:        "LastName",
-		Role:            "admin",
-		Avatar:          nil,
-		Password:        "123456",
+		UserID:    userUUID,
+		Email:     "email@gmail.com",
+		FirstName: "FirstName",
+		LastName:  "LastName",
+		Role:      "admin",
+		Avatar:    nil,
+		Password:  "123456",
 	}
 
 	rows := sqlmock.NewRows(columns).AddRow(
@@ -193,7 +193,7 @@ func TestUserRepository_FindById(t *testing.T) {
 		time.Now(),
 	)
 
-	mock.ExpectQuery(findByIDQuery).WithArgs(mockUser.UserID).WillReturnRows(rows)
+	mock.ExpectQuery(findByIdQuery).WithArgs(mockUser.UserID).WillReturnRows(rows)
 
 	foundUser, err := userPGRepository.FindById(context.Background(), mockUser.UserID)
 	require.NoError(t, err)
@@ -216,13 +216,13 @@ func TestUserRepository_UpdateById(t *testing.T) {
 	columns := []string{"user_id", "first_name", "last_name", "email", "password", "avatar", "role", "created_at", "updated_at"}
 	userUUID := uuid.New()
 	mockUser := &models.User{
-		UserID:          userUUID,
-		Email:           "email@gmail.com",
-		FirstName:       "FirstName",
-		LastName:        "LastName",
-		Role:            "admin",
-		Avatar:          nil,
-		Password:        "123456",
+		UserID:    userUUID,
+		Email:     "email@gmail.com",
+		FirstName: "FirstName",
+		LastName:  "LastName",
+		Role:      "admin",
+		Avatar:    nil,
+		Password:  "123456",
 	}
 
 	_ = sqlmock.NewRows(columns).AddRow(
@@ -238,7 +238,7 @@ func TestUserRepository_UpdateById(t *testing.T) {
 	)
 
 	mockUser.FirstName = "FirstNameChanged"
-	mock.ExpectExec(updateByIDQuery).WithArgs(
+	mock.ExpectExec(updateByIdQuery).WithArgs(
 		mockUser.UserID,
 		mockUser.FirstName,
 		mockUser.LastName,
@@ -270,13 +270,13 @@ func TestUserRepository_DeleteById(t *testing.T) {
 	columns := []string{"user_id", "first_name", "last_name", "email", "password", "avatar", "role", "created_at", "updated_at"}
 	userUUID := uuid.New()
 	mockUser := &models.User{
-		UserID:          userUUID,
-		Email:           "email@gmail.com",
-		FirstName:       "FirstName",
-		LastName:        "LastName",
-		Role:            "admin",
-		Avatar:          nil,
-		Password:        "123456",
+		UserID:    userUUID,
+		Email:     "email@gmail.com",
+		FirstName: "FirstName",
+		LastName:  "LastName",
+		Role:      "admin",
+		Avatar:    nil,
+		Password:  "123456",
 	}
 
 	_ = sqlmock.NewRows(columns).AddRow(
@@ -291,7 +291,7 @@ func TestUserRepository_DeleteById(t *testing.T) {
 		time.Now(),
 	)
 
-	mock.ExpectExec(deleteByIDQuery).WithArgs(mockUser.UserID).WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec(deleteByIdQuery).WithArgs(mockUser.UserID).WillReturnResult(sqlmock.NewResult(0, 1))
 
 	err = userPGRepository.DeleteById(context.Background(), mockUser.UserID)
 	require.NoError(t, err)

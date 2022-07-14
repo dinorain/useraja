@@ -49,23 +49,23 @@ func (s *sessionRepo) CreateSession(ctx context.Context, sess *models.Session, e
 }
 
 // Get session by id
-func (s *sessionRepo) GetSessionByID(ctx context.Context, sessionID string) (*models.Session, error) {
+func (s *sessionRepo) GetSessionById(ctx context.Context, sessionID string) (*models.Session, error) {
 	sessBytes, err := s.redisClient.Get(ctx, s.generateKey(sessionID)).Bytes()
 	if err != nil {
-		return nil, errors.Wrap(err, "sessionRep.GetSessionByID.redisClient.Get")
+		return nil, errors.Wrap(err, "sessionRep.GetSessionById.redisClient.Get")
 	}
 
 	sess := &models.Session{}
 	if err = json.Unmarshal(sessBytes, &sess); err != nil {
-		return nil, errors.Wrap(err, "sessionRepo.GetSessionByID.json.Unmarshal")
+		return nil, errors.Wrap(err, "sessionRepo.GetSessionById.json.Unmarshal")
 	}
 	return sess, nil
 }
 
 // Delete session by id
-func (s *sessionRepo) DeleteByID(ctx context.Context, sessionID string) error {
+func (s *sessionRepo) DeleteById(ctx context.Context, sessionID string) error {
 	if err := s.redisClient.Del(ctx, s.generateKey(sessionID)).Err(); err != nil {
-		return errors.Wrap(err, "sessionRepo.DeleteByID")
+		return errors.Wrap(err, "sessionRepo.DeleteById")
 	}
 	return nil
 }

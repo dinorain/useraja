@@ -50,31 +50,31 @@ func (mr *MockSessRepositoryMockRecorder) CreateSession(ctx, session, expire int
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSession", reflect.TypeOf((*MockSessRepository)(nil).CreateSession), ctx, session, expire)
 }
 
-// DeleteByID mocks base method.
-func (m *MockSessRepository) DeleteByID(ctx context.Context, sessionID string) error {
+// DeleteById mocks base method.
+func (m *MockSessRepository) DeleteById(ctx context.Context, sessionID string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteByID", ctx, sessionID)
+	ret := m.ctrl.Call(m, "DeleteById", ctx, sessionID)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// DeleteByID indicates an expected call of DeleteByID.
-func (mr *MockSessRepositoryMockRecorder) DeleteByID(ctx, sessionID interface{}) *gomock.Call {
+// DeleteById indicates an expected call of DeleteById.
+func (mr *MockSessRepositoryMockRecorder) DeleteById(ctx, sessionID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteByID", reflect.TypeOf((*MockSessRepository)(nil).DeleteByID), ctx, sessionID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteById", reflect.TypeOf((*MockSessRepository)(nil).DeleteById), ctx, sessionID)
 }
 
-// GetSessionByID mocks base method.
-func (m *MockSessRepository) GetSessionByID(ctx context.Context, sessionID string) (*models.Session, error) {
+// GetSessionById mocks base method.
+func (m *MockSessRepository) GetSessionById(ctx context.Context, sessionID string) (*models.Session, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetSessionByID", ctx, sessionID)
+	ret := m.ctrl.Call(m, "GetSessionById", ctx, sessionID)
 	ret0, _ := ret[0].(*models.Session)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetSessionByID indicates an expected call of GetSessionByID.
-func (mr *MockSessRepositoryMockRecorder) GetSessionByID(ctx, sessionID interface{}) *gomock.Call {
+// GetSessionById indicates an expected call of GetSessionById.
+func (mr *MockSessRepositoryMockRecorder) GetSessionById(ctx, sessionID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSessionByID", reflect.TypeOf((*MockSessRepository)(nil).GetSessionByID), ctx, sessionID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSessionById", reflect.TypeOf((*MockSessRepository)(nil).GetSessionById), ctx, sessionID)
 }

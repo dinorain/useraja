@@ -81,8 +81,8 @@ func (u *usersServiceGRPC) FindByEmail(ctx context.Context, r *userService.FindB
 	return &userService.FindByEmailResponse{User: u.userModelToProto(user)}, err
 }
 
-// FindByID find user by uuid
-func (u *usersServiceGRPC) FindByID(ctx context.Context, r *userService.FindByIDRequest) (*userService.FindByIDResponse, error) {
+// FindById find user by uuid
+func (u *usersServiceGRPC) FindById(ctx context.Context, r *userService.FindByIdRequest) (*userService.FindByIdResponse, error) {
 	userUUID, err := uuid.Parse(r.GetUuid())
 	if err != nil {
 		u.logger.Errorf("uuid.Parse: %v", err)
@@ -95,7 +95,7 @@ func (u *usersServiceGRPC) FindByID(ctx context.Context, r *userService.FindByID
 		return nil, status.Errorf(grpc_errors.ParseGRPCErrStatusCode(err), "userUC.CachedFindById: %v", err)
 	}
 
-	return &userService.FindByIDResponse{User: u.userModelToProto(user)}, nil
+	return &userService.FindByIdResponse{User: u.userModelToProto(user)}, nil
 }
 
 // GetMe to get session id from, ctx metadata, find user by uuid and returns it
@@ -106,13 +106,13 @@ func (u *usersServiceGRPC) GetMe(ctx context.Context, r *userService.GetMeReques
 		return nil, status.Errorf(grpc_errors.ParseGRPCErrStatusCode(err), "sessUC.getSessionIDFromCtx: %v", err)
 	}
 
-	session, err := u.sessUC.GetSessionByID(ctx, sessID)
+	session, err := u.sessUC.GetSessionById(ctx, sessID)
 	if err != nil {
-		u.logger.Errorf("sessUC.GetSessionByID: %v", err)
+		u.logger.Errorf("sessUC.GetSessionById: %v", err)
 		if errors.Is(err, redis.Nil) {
-			return nil, status.Errorf(codes.NotFound, "sessUC.GetSessionByID: %v", grpc_errors.ErrNotFound)
+			return nil, status.Errorf(codes.NotFound, "sessUC.GetSessionById: %v", grpc_errors.ErrNotFound)
 		}
-		return nil, status.Errorf(grpc_errors.ParseGRPCErrStatusCode(err), "sessUC.GetSessionByID: %v", err)
+		return nil, status.Errorf(grpc_errors.ParseGRPCErrStatusCode(err), "sessUC.GetSessionById: %v", err)
 	}
 
 	user, err := u.userUC.CachedFindById(ctx, session.UserID)
@@ -132,9 +132,9 @@ func (u *usersServiceGRPC) Logout(ctx context.Context, request *userService.Logo
 		return nil, err
 	}
 
-	if err := u.sessUC.DeleteByID(ctx, sessID); err != nil {
-		u.logger.Errorf("sessUC.DeleteByID: %v", err)
-		return nil, status.Errorf(grpc_errors.ParseGRPCErrStatusCode(err), "sessUC.DeleteByID: %v", err)
+	if err := u.sessUC.DeleteById(ctx, sessID); err != nil {
+		u.logger.Errorf("sessUC.DeleteById: %v", err)
+		return nil, status.Errorf(grpc_errors.ParseGRPCErrStatusCode(err), "sessUC.DeleteById: %v", err)
 	}
 
 	return &userService.LogoutResponse{}, nil

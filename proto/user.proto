@@ -44,11 +44,11 @@ message FindByEmailResponse {
   User user = 1;
 }
 
-message FindByIDRequest {
+message FindByIdRequest {
   string uuid = 1;
 }
 
-message FindByIDResponse {
+message FindByIdResponse {
   User user = 1;
 }
 
@@ -76,7 +76,7 @@ message LogoutResponse {}
 service UserService{
   rpc Register(RegisterRequest) returns (RegisterResponse);
   rpc FindByEmail(FindByEmailRequest) returns (FindByEmailResponse);
-  rpc FindByID(FindByIDRequest) returns (FindByIDResponse);
+  rpc FindById(FindByIdRequest) returns (FindByIdResponse);
   rpc Login(LoginRequest) returns (LoginResponse);
   rpc GetMe(GetMeRequest) returns(GetMeResponse);
   rpc Logout(LogoutRequest) returns(LogoutResponse);

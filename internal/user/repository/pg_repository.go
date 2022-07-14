@@ -48,7 +48,7 @@ func (r *UserRepository) Create(ctx context.Context, user *models.User) (*models
 func (r *UserRepository) UpdateById(ctx context.Context, user *models.User) (*models.User, error) {
 	if res, err := r.db.ExecContext(
 		ctx,
-		updateByIDQuery,
+		updateByIdQuery,
 		user.UserID,
 		user.FirstName,
 		user.LastName,
@@ -91,7 +91,7 @@ func (r *UserRepository) FindByEmail(ctx context.Context, email string) (*models
 // FindById Find user by uuid
 func (r *UserRepository) FindById(ctx context.Context, userID uuid.UUID) (*models.User, error) {
 	user := &models.User{}
-	if err := r.db.GetContext(ctx, user, findByIDQuery, userID); err != nil {
+	if err := r.db.GetContext(ctx, user, findByIdQuery, userID); err != nil {
 		return nil, errors.Wrap(err, "UserRepository.FindById.GetContext")
 	}
 
@@ -100,7 +100,7 @@ func (r *UserRepository) FindById(ctx context.Context, userID uuid.UUID) (*model
 
 // DeleteById Find user by uuid
 func (r *UserRepository) DeleteById(ctx context.Context, userID uuid.UUID) error {
-	if res, err := r.db.ExecContext(ctx, deleteByIDQuery, userID); err != nil {
+	if res, err := r.db.ExecContext(ctx, deleteByIdQuery, userID); err != nil {
 		return errors.Wrap(err, "UserRepository.DeleteById.ExecContext")
 	} else {
 		cnt, err := res.RowsAffected()
