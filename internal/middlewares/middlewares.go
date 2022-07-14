@@ -57,7 +57,7 @@ func (mw *middlewareManager) IsAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		if role != models.UserRoleAdmin {
-			return httpErrors.NewForbiddenError(c, echo.ErrForbidden, mw.cfg.Http.DebugErrorsResponse)
+			return httpErrors.NewForbiddenError(c, nil, mw.cfg.Http.DebugErrorsResponse)
 		}
 
 		return next(c)
