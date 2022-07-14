@@ -1,4 +1,4 @@
-package http
+package handlers
 
 import (
 	"errors"
@@ -33,6 +33,8 @@ type userHandlersHTTP struct {
 	userUC user.UserUseCase
 	sessUC session.SessUseCase
 }
+
+var _ user.UserHandlers = (*userHandlersHTTP)(nil)
 
 func NewUserHandlersHTTP(
 	group *echo.Group,
@@ -72,6 +74,7 @@ func (h *userHandlersHTTP) Register() echo.HandlerFunc {
 		}
 
 		user, err := h.registerReqToUserModel(createDto)
+
 		if err != nil {
 			h.logger.Errorf("registerReqToUserModel: %v", err)
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
@@ -175,7 +178,7 @@ func (h *userHandlersHTTP) FindAll() echo.HandlerFunc {
 	}
 }
 
-// FindByID
+// FindById
 // @Tags Users
 // @Summary Find user
 // @Description Find existing user by id
@@ -184,7 +187,7 @@ func (h *userHandlersHTTP) FindAll() echo.HandlerFunc {
 // @Security ApiKeyAuth
 // @Success 200 {object} dto.UserResponseDto
 // @Router /user/{id} [get]
-func (h *userHandlersHTTP) FindByID() echo.HandlerFunc {
+func (h *userHandlersHTTP) FindById() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := c.Request().Context()
 
@@ -204,7 +207,7 @@ func (h *userHandlersHTTP) FindByID() echo.HandlerFunc {
 	}
 }
 
-// UpdateByID
+// UpdateById
 // @Tags Users
 // @Summary Update user
 // @Description Update existing user
@@ -215,7 +218,7 @@ func (h *userHandlersHTTP) FindByID() echo.HandlerFunc {
 // @Param payload body dto.UserUpdateRequestDto true "Payload"
 // @Success 200 {object} dto.UserResponseDto
 // @Router /user/{id} [put]
-func (h *userHandlersHTTP) UpdateByID() echo.HandlerFunc {
+func (h *userHandlersHTTP) UpdateById() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := c.Request().Context()
 
@@ -232,7 +235,7 @@ func (h *userHandlersHTTP) UpdateByID() echo.HandlerFunc {
 		}
 
 		if role != models.UserRoleAdmin && userID != userUUID.String() {
-			return httpErrors.NewForbiddenError(c, err, h.cfg.Http.DebugErrorsResponse)
+			return httpErrors.NewForbiddenError(c, nil, h.cfg.Http.DebugErrorsResponse)
 		}
 
 		updateDto := &dto.UserUpdateRequestDto{}
@@ -268,7 +271,7 @@ func (h *userHandlersHTTP) UpdateByID() echo.HandlerFunc {
 	}
 }
 
-// DeleteByID
+// DeleteById
 // @Tags Users
 // @Summary Delete user
 // @Description Delete existing user
@@ -278,7 +281,7 @@ func (h *userHandlersHTTP) UpdateByID() echo.HandlerFunc {
 // @Success 200 {object} nil
 // @Param id path string true "User ID"
 // @Router /user/{id} [delete]
-func (h *userHandlersHTTP) DeleteByID() echo.HandlerFunc {
+func (h *userHandlersHTTP) DeleteById() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := c.Request().Context()
 
@@ -315,11 +318,11 @@ func (h *userHandlersHTTP) GetMe() echo.HandlerFunc {
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
 		}
 
-		session, err := h.sessUC.GetSessionByID(ctx, sessID)
+		session, err := h.sessUC.GetSessionById(ctx, sessID)
 		if err != nil {
-			h.logger.Errorf("sessUC.GetSessionByID: %v", err)
+			h.logger.Errorf("sessUC.GetSessionById: %v", err)
 			if errors.Is(err, redis.Nil) {
-				return httpErrors.NewUnauthorizedError(c, err, h.cfg.Http.DebugErrorsResponse)
+				return httpErrors.NewUnauthorizedError(c, nil, h.cfg.Http.DebugErrorsResponse)
 			}
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
 		}
@@ -352,8 +355,8 @@ func (h *userHandlersHTTP) Logout() echo.HandlerFunc {
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
 		}
 
-		if err := h.sessUC.DeleteByID(ctx, sessID); err != nil {
-			h.logger.Errorf("sessUC.DeleteByID: %v", err)
+		if err := h.sessUC.DeleteById(ctx, sessID); err != nil {
+			h.logger.Errorf("sessUC.DeleteById: %v", err)
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
 		}
 
@@ -411,11 +414,11 @@ func (h *userHandlersHTTP) RefreshToken() echo.HandlerFunc {
 			return httpErrors.ErrorCtxResponse(c, errors.New("invalid refresh token"), h.cfg.Http.DebugErrorsResponse)
 		}
 
-		session, err := h.sessUC.GetSessionByID(ctx, sessID)
+		session, err := h.sessUC.GetSessionById(ctx, sessID)
 		if err != nil {
-			h.logger.Errorf("sessUC.GetSessionByID: %v", err)
+			h.logger.Errorf("sessUC.GetSessionById: %v", err)
 			if errors.Is(err, redis.Nil) {
-				return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
+				return httpErrors.NewUnauthorizedError(c, nil, h.cfg.Http.DebugErrorsResponse)
 			}
 			return httpErrors.ErrorCtxResponse(c, err, h.cfg.Http.DebugErrorsResponse)
 		}
@@ -469,17 +472,17 @@ func (h *userHandlersHTTP) getSessionIDFromCtx(c echo.Context) (sessionID string
 		return "", "", "", errors.New("invalid token header")
 	}
 
-	return sessionID, role, userID, nil
+	return sessionID, userID, role, nil
 }
 
 func (h *userHandlersHTTP) registerReqToUserModel(r *dto.UserRegisterRequestDto) (*models.User, error) {
 	userCandidate := &models.User{
-		Email:           r.Email,
-		FirstName:       r.FirstName,
-		LastName:        r.LastName,
-		Role:            r.Role,
-		Avatar:          nil,
-		Password:        r.Password,
+		Email:     r.Email,
+		FirstName: r.FirstName,
+		LastName:  r.LastName,
+		Role:      r.Role,
+		Avatar:    nil,
+		Password:  r.Password,
 	}
 
 	if err := userCandidate.PrepareCreate(); err != nil {

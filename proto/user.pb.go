@@ -418,7 +418,7 @@ func (x *FindByEmailResponse) GetUser() *User {
 	return nil
 }
 
-type FindByIDRequest struct {
+type FindByIdRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -426,8 +426,8 @@ type FindByIDRequest struct {
 	Uuid string `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
 }
 
-func (x *FindByIDRequest) Reset() {
-	*x = FindByIDRequest{}
+func (x *FindByIdRequest) Reset() {
+	*x = FindByIdRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_user_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -435,13 +435,13 @@ func (x *FindByIDRequest) Reset() {
 	}
 }
 
-func (x *FindByIDRequest) String() string {
+func (x *FindByIdRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*FindByIDRequest) ProtoMessage() {}
+func (*FindByIdRequest) ProtoMessage() {}
 
-func (x *FindByIDRequest) ProtoReflect() protoreflect.Message {
+func (x *FindByIdRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_user_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -453,19 +453,19 @@ func (x *FindByIDRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use FindByIDRequest.ProtoReflect.Descriptor instead.
-func (*FindByIDRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use FindByIdRequest.ProtoReflect.Descriptor instead.
+func (*FindByIdRequest) Descriptor() ([]byte, []int) {
 	return file_user_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *FindByIDRequest) GetUuid() string {
+func (x *FindByIdRequest) GetUuid() string {
 	if x != nil {
 		return x.Uuid
 	}
 	return ""
 }
 
-type FindByIDResponse struct {
+type FindByIdResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -473,8 +473,8 @@ type FindByIDResponse struct {
 	User *User `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
 }
 
-func (x *FindByIDResponse) Reset() {
-	*x = FindByIDResponse{}
+func (x *FindByIdResponse) Reset() {
+	*x = FindByIdResponse{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_user_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -482,13 +482,13 @@ func (x *FindByIDResponse) Reset() {
 	}
 }
 
-func (x *FindByIDResponse) String() string {
+func (x *FindByIdResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*FindByIDResponse) ProtoMessage() {}
+func (*FindByIdResponse) ProtoMessage() {}
 
-func (x *FindByIDResponse) ProtoReflect() protoreflect.Message {
+func (x *FindByIdResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_user_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -500,12 +500,12 @@ func (x *FindByIDResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use FindByIDResponse.ProtoReflect.Descriptor instead.
-func (*FindByIDResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use FindByIdResponse.ProtoReflect.Descriptor instead.
+func (*FindByIdResponse) Descriptor() ([]byte, []int) {
 	return file_user_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *FindByIDResponse) GetUser() *User {
+func (x *FindByIdResponse) GetUser() *User {
 	if x != nil {
 		return x.User
 	}
@@ -906,8 +906,8 @@ var file_user_proto_goTypes = []interface{}{
 	(*RegisterResponse)(nil),      // 3: userService.RegisterResponse
 	(*FindByEmailRequest)(nil),    // 4: userService.FindByEmailRequest
 	(*FindByEmailResponse)(nil),   // 5: userService.FindByEmailResponse
-	(*FindByIDRequest)(nil),       // 6: userService.FindByIDRequest
-	(*FindByIDResponse)(nil),      // 7: userService.FindByIDResponse
+	(*FindByIdRequest)(nil),       // 6: userService.FindByIdRequest
+	(*FindByIdResponse)(nil),      // 7: userService.FindByIdResponse
 	(*LoginRequest)(nil),          // 8: userService.LoginRequest
 	(*LoginResponse)(nil),         // 9: userService.LoginResponse
 	(*GetMeRequest)(nil),          // 10: userService.GetMeRequest
@@ -921,18 +921,18 @@ var file_user_proto_depIdxs = []int32{
 	14, // 1: userService.User.updated_at:type_name -> google.protobuf.Timestamp
 	1,  // 2: userService.RegisterResponse.user:type_name -> userService.User
 	1,  // 3: userService.FindByEmailResponse.user:type_name -> userService.User
-	1,  // 4: userService.FindByIDResponse.user:type_name -> userService.User
+	1,  // 4: userService.FindByIdResponse.user:type_name -> userService.User
 	1,  // 5: userService.LoginResponse.user:type_name -> userService.User
 	1,  // 6: userService.GetMeResponse.user:type_name -> userService.User
 	2,  // 7: userService.UserService.Register:input_type -> userService.RegisterRequest
 	4,  // 8: userService.UserService.FindByEmail:input_type -> userService.FindByEmailRequest
-	6,  // 9: userService.UserService.FindByID:input_type -> userService.FindByIDRequest
+	6,  // 9: userService.UserService.FindById:input_type -> userService.FindByIdRequest
 	8,  // 10: userService.UserService.Login:input_type -> userService.LoginRequest
 	10, // 11: userService.UserService.GetMe:input_type -> userService.GetMeRequest
 	12, // 12: userService.UserService.Logout:input_type -> userService.LogoutRequest
 	3,  // 13: userService.UserService.Register:output_type -> userService.RegisterResponse
 	5,  // 14: userService.UserService.FindByEmail:output_type -> userService.FindByEmailResponse
-	7,  // 15: userService.UserService.FindByID:output_type -> userService.FindByIDResponse
+	7,  // 15: userService.UserService.FindById:output_type -> userService.FindByIdResponse
 	9,  // 16: userService.UserService.Login:output_type -> userService.LoginResponse
 	11, // 17: userService.UserService.GetMe:output_type -> userService.GetMeResponse
 	13, // 18: userService.UserService.Logout:output_type -> userService.LogoutResponse
@@ -1022,7 +1022,7 @@ func file_user_proto_init() {
 			}
 		}
 		file_user_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*FindByIDRequest); i {
+			switch v := v.(*FindByIdRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1034,7 +1034,7 @@ func file_user_proto_init() {
 			}
 		}
 		file_user_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*FindByIDResponse); i {
+			switch v := v.(*FindByIdResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1152,7 +1152,7 @@ const _ = grpc.SupportPackageIsVersion6
 type UserServiceClient interface {
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
 	FindByEmail(ctx context.Context, in *FindByEmailRequest, opts ...grpc.CallOption) (*FindByEmailResponse, error)
-	FindByID(ctx context.Context, in *FindByIDRequest, opts ...grpc.CallOption) (*FindByIDResponse, error)
+	FindById(ctx context.Context, in *FindByIdRequest, opts ...grpc.CallOption) (*FindByIdResponse, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	GetMe(ctx context.Context, in *GetMeRequest, opts ...grpc.CallOption) (*GetMeResponse, error)
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
@@ -1184,9 +1184,9 @@ func (c *userServiceClient) FindByEmail(ctx context.Context, in *FindByEmailRequ
 	return out, nil
 }
 
-func (c *userServiceClient) FindByID(ctx context.Context, in *FindByIDRequest, opts ...grpc.CallOption) (*FindByIDResponse, error) {
-	out := new(FindByIDResponse)
-	err := c.cc.Invoke(ctx, "/userService.UserService/FindByID", in, out, opts...)
+func (c *userServiceClient) FindById(ctx context.Context, in *FindByIdRequest, opts ...grpc.CallOption) (*FindByIdResponse, error) {
+	out := new(FindByIdResponse)
+	err := c.cc.Invoke(ctx, "/userService.UserService/FindById", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1224,7 +1224,7 @@ func (c *userServiceClient) Logout(ctx context.Context, in *LogoutRequest, opts 
 type UserServiceServer interface {
 	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
 	FindByEmail(context.Context, *FindByEmailRequest) (*FindByEmailResponse, error)
-	FindByID(context.Context, *FindByIDRequest) (*FindByIDResponse, error)
+	FindById(context.Context, *FindByIdRequest) (*FindByIdResponse, error)
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	GetMe(context.Context, *GetMeRequest) (*GetMeResponse, error)
 	Logout(context.Context, *LogoutRequest) (*LogoutResponse, error)
@@ -1240,8 +1240,8 @@ func (*UnimplementedUserServiceServer) Register(context.Context, *RegisterReques
 func (*UnimplementedUserServiceServer) FindByEmail(context.Context, *FindByEmailRequest) (*FindByEmailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindByEmail not implemented")
 }
-func (*UnimplementedUserServiceServer) FindByID(context.Context, *FindByIDRequest) (*FindByIDResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FindByID not implemented")
+func (*UnimplementedUserServiceServer) FindById(context.Context, *FindByIdRequest) (*FindByIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindById not implemented")
 }
 func (*UnimplementedUserServiceServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
@@ -1293,20 +1293,20 @@ func _UserService_FindByEmail_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_FindByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FindByIDRequest)
+func _UserService_FindById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindByIdRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).FindByID(ctx, in)
+		return srv.(UserServiceServer).FindById(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/userService.UserService/FindByID",
+		FullMethod: "/userService.UserService/FindById",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).FindByID(ctx, req.(*FindByIDRequest))
+		return srv.(UserServiceServer).FindById(ctx, req.(*FindByIdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1378,8 +1378,8 @@ var _UserService_serviceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_FindByEmail_Handler,
 		},
 		{
-			MethodName: "FindByID",
-			Handler:    _UserService_FindByID_Handler,
+			MethodName: "FindById",
+			Handler:    _UserService_FindById_Handler,
 		},
 		{
 			MethodName: "Login",

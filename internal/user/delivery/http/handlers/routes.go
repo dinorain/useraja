@@ -1,4 +1,4 @@
-package http
+package handlers
 
 func (h *userHandlersHTTP) UserMapRoutes() {
 	h.group.POST("/refresh", h.RefreshToken())
@@ -6,13 +6,11 @@ func (h *userHandlersHTTP) UserMapRoutes() {
 
 	h.group.Use(h.mw.IsLoggedIn())
 	h.group.POST("/logout", h.Logout())
-	h.group.GET("/:id", h.FindByID())
-	h.group.PUT("/:id", h.UpdateByID())
+	h.group.GET("/:id", h.FindById())
+	h.group.PUT("/:id", h.UpdateById())
 	h.group.GET("/me", h.GetMe())
 
-	h.group.Use(h.mw.IsLoggedIn(), h.mw.IsAdmin)
-	h.group.POST("", h.Register())
-
 	h.group.GET("", h.FindAll())
-	h.group.DELETE("/:id", h.DeleteByID())
+	h.group.POST("", h.Register(), h.mw.IsAdmin)
+	h.group.DELETE("/:id", h.DeleteById(), h.mw.IsAdmin)
 }
