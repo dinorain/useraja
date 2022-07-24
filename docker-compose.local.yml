@@ -3,16 +3,16 @@ version: "3.8"
 services:
   redis:
     image: redis:6.0.9-alpine
-    container_name: auth_redis
+    container_name: useraja_redis
     ports:
       - "6379:6379"
     restart: always
     networks:
-      - auth_network
+      - useraja_network
 
   postgesql:
     image: postgres:13-alpine
-    container_name: auth_postgesql
+    container_name: useraja_postgesql
     expose:
       - "5432"
     ports:
@@ -27,7 +27,7 @@ services:
     volumes:
       - ./pgdata:/var/lib/postgresql/data
     networks:
-      - auth_network
+      - useraja_network
 
   node_exporter:
     container_name: node_exporter_con
@@ -35,8 +35,8 @@ services:
     ports:
       - '9101:9100'
     networks:
-      - auth_network
+      - useraja_network
 
 networks:
-  auth_network:
+  useraja_network:
     driver: bridge

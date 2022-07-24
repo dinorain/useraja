@@ -1,10 +1,12 @@
-### Useraja: Golang auth microservice example
+### Useraja: Golang auth microservice example with gRPC and REST endpoints
 
 #### What have been used:
+* [GRPC](https://grpc.io/) - gRPC
+* [Echo](https://github.com/labstack/echo) - Go web application framework
 * [sqlx](https://github.com/jmoiron/sqlx) - Extensions to database/sql.
 * [pgx](https://github.com/jackc/pgx) - PostgreSQL driver and toolkit for Go
 * [JWT]("https://github.com/golang-jwt/jwt") - A Go implementation of JSON Web Tokens.
-* [viper](https://github.com/spf13/viper) - Go configuration with fangs
+* [viper](https://github.com/spf13/viper) - A Go configuration with fangs
 * [go-redis](https://github.com/go-redis/redis) - Redis client for Golang
 * [zap](https://github.com/uber-go/zap) - Logger
 * [validator](https://github.com/go-playground/validator) - Go Struct and Field validation
@@ -13,7 +15,6 @@
 * [gomock](https://github.com/golang/mock) - Mocking framework
 * [CompileDaemon](https://github.com/githubnemo/CompileDaemon) - Compile daemon for Go
 * [Docker](https://www.docker.com/) - Docker
-* [GRPC](https://grpc.io/) - GRPC (Still in progress)
 
 #### Docker compose files:
     docker-compose.local.yml - run postgresql, redis, aws, prometheus, grafana containers

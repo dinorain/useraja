@@ -27,7 +27,7 @@ import (
 	"github.com/dinorain/useraja/pkg/logger"
 )
 
-func TestUsersService_Register(t *testing.T) {
+func TestUsersHandler_Register(t *testing.T) {
 	t.Parallel()
 
 	ctrl := gomock.NewController(t)
@@ -72,7 +72,7 @@ func TestUsersService_Register(t *testing.T) {
 	require.Equal(t, buf.String(), res.Body.String())
 }
 
-func TestUsersService_Login(t *testing.T) {
+func TestUsersHandler_Login(t *testing.T) {
 	t.Parallel()
 
 	ctrl := gomock.NewController(t)
@@ -118,7 +118,7 @@ func TestUsersService_Login(t *testing.T) {
 	require.Equal(t, http.StatusCreated, res.Code)
 }
 
-func TestUsersService_FindAll(t *testing.T) {
+func TestUsersHandler_FindAll(t *testing.T) {
 	t.Parallel()
 
 	ctrl := gomock.NewController(t)
@@ -155,7 +155,7 @@ func TestUsersService_FindAll(t *testing.T) {
 	require.Equal(t, http.StatusOK, res.Code)
 }
 
-func TestUsersService_FindById(t *testing.T) {
+func TestUsersHandler_FindById(t *testing.T) {
 	t.Parallel()
 
 	ctrl := gomock.NewController(t)
@@ -185,7 +185,7 @@ func TestUsersService_FindById(t *testing.T) {
 	require.Equal(t, http.StatusOK, res.Code)
 }
 
-func TestUsersService_UpdateById(t *testing.T) {
+func TestUsersHandler_UpdateById(t *testing.T) {
 	t.Parallel()
 
 	ctrl := gomock.NewController(t)
@@ -271,7 +271,7 @@ func TestUsersService_UpdateById(t *testing.T) {
 	})
 }
 
-func TestUsersService_DeleteById(t *testing.T) {
+func TestUsersHandler_DeleteById(t *testing.T) {
 	t.Parallel()
 
 	ctrl := gomock.NewController(t)
@@ -302,7 +302,7 @@ func TestUsersService_DeleteById(t *testing.T) {
 	require.Equal(t, http.StatusOK, res.Code)
 }
 
-func TestUsersService_GetMe(t *testing.T) {
+func TestUsersHandler_GetMe(t *testing.T) {
 	t.Parallel()
 
 	ctrl := gomock.NewController(t)
@@ -349,7 +349,7 @@ func TestUsersService_GetMe(t *testing.T) {
 	require.Equal(t, http.StatusOK, res.Code)
 }
 
-func TestUsersService_Logout(t *testing.T) {
+func TestUsersHandler_Logout(t *testing.T) {
 	t.Parallel()
 
 	ctrl := gomock.NewController(t)
@@ -395,7 +395,7 @@ func TestUsersService_Logout(t *testing.T) {
 	require.Equal(t, http.StatusOK, res.Code)
 }
 
-func TestUsersService_RefreshToken(t *testing.T) {
+func TestUsersHandler_RefreshToken(t *testing.T) {
 	t.Parallel()
 
 	ctrl := gomock.NewController(t)

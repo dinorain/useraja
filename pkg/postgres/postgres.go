@@ -6,8 +6,8 @@ import (
 
 	"github.com/dinorain/useraja/config"
 
-	_ "github.com/lib/pq"
 	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 )
 
 const (

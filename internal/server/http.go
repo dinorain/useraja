@@ -1,11 +1,13 @@
 package server
 
 import (
+	"net"
 	"strings"
 	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+
 	"github.com/dinorain/useraja/docs"
 
 	echoSwagger "github.com/swaggo/echo-swagger"
@@ -20,12 +22,16 @@ const (
 	gzipLevel      = 5
 )
 
-func (s *Server) runHttpServer() error {
+func (s *Server) runHttpServer(listener *net.Listener) error {
 	s.mapRoutes()
 
 	s.echo.Server.ReadTimeout = readTimeout
 	s.echo.Server.WriteTimeout = writeTimeout
 	s.echo.Server.MaxHeaderBytes = maxHeaderBytes
+
+	if listener != nil {
+		s.echo.Listener = *listener
+	}
 
 	return s.echo.Start(s.cfg.Http.Port)
 }
