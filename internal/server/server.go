@@ -95,10 +95,6 @@ func (s *Server) Run() error {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 	defer cancel()
 
-	//m := cmux.New(l)
-	//grpcL := m.Match(cmux.HTTP2HeaderField("content-type", "application/grpc"))
-	//httpL := m.Match(cmux.HTTP1Fast())
-
 	go func() {
 		s.logger.Infof("Server is listening on port: %v", s.cfg.Server.Port)
 		if err := grpcS.Serve(l); err != nil {
