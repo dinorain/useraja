@@ -29,14 +29,6 @@ services:
     networks:
       - useraja_network
 
-  node_exporter:
-    container_name: node_exporter_con
-    image: prom/node-exporter
-    ports:
-      - '9101:9100'
-    networks:
-      - useraja_network
-
 networks:
   useraja_network:
     driver: bridge

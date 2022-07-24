@@ -4,7 +4,7 @@
 * [GRPC](https://grpc.io/) - gRPC
 * [Echo](https://github.com/labstack/echo) - Go web application framework
 * [sqlx](https://github.com/jmoiron/sqlx) - Extensions to database/sql.
-* [pgx](https://github.com/jackc/pgx) - PostgreSQL driver and toolkit for Go
+* [pgx](https://github.com/jackc/pgx) - PostgreS, redis, aws, prometheus, grafana containersQL driver and toolkit for Go
 * [JWT](https://github.com/golang-jwt/jwt) - A Go implementation of JSON Web Tokens.
 * [viper](https://github.com/spf13/viper) - A Go configuration with fangs
 * [go-redis](https://github.com/go-redis/redis) - Redis client for Golang
@@ -17,8 +17,8 @@
 * [Docker](https://www.docker.com/) - Docker
 
 #### Docker compose files:
-    docker-compose.local.yml - run postgresql, redis, aws, prometheus, grafana containers
-    docker-compose.dev.yml - run all in docker
+    docker-compose.local.yml
+    docker-compose.yml
 
 ### Docker development usage:
     make develop
